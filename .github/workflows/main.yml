@@ -1,0 +1,26 @@
+name: deploy site
+
+on:
+  push:
+    branches:
+      - main
+
+
+jobs:
+
+  deploy:
+
+    runs-on: ubuntu-latest
+
+    steps:
+
+      - name: Git checkout
+        uses: actions/checkout@v3
+
+      - name: Deploy
+        uses: peaceiris/actions-gh-pages@v3
+        with:
+          personal_token: ${{ secrets.BUILD_TOKEN }}
+          external_repository: gndpwnd/discovery-oasis
+          publish_dir: ./docs
+          publish_branch: published

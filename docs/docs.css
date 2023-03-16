@@ -1,0 +1,143 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+    background-color: #000000;
+}
+
+#logo-container {
+    display: flex;
+    justify-content: center;
+    margin-top: 50px;
+}
+
+#logo-container img {
+    width: 550px;
+    height: 82px;
+}
+
+.icon-container {
+    width: 300px;
+    height: 300px;
+    border-radius: 50%;
+    position: absolute;
+    top: 25%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background: radial-gradient(circle at center, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    background-size: 0 0;
+}
+
+.icon-container img {
+    width: 200px;
+    height: 94px;
+    display: block;
+    margin: 0 auto;
+    animation: rotate-colors 3s linear infinite;
+}
+
+@keyframes rotate-colors {
+    0% {
+        filter: hue-rotate(0deg);
+    }
+    25% {
+        filter: hue-rotate(90deg);
+    }
+    50% {
+        filter: hue-rotate(180deg);
+    }
+    75% {
+        filter: hue-rotate(270deg);
+    }
+    100% {
+        filter: hue-rotate(360deg);
+    }
+}
+
+#download {
+    text-align: center;
+    margin-top: 150px;
+  }
+  
+  #download-button {
+    display: inline-block;
+    background-color: #4CAF50;
+    color: white;
+    padding: 10px 20px;
+    text-align: center;
+    text-decoration: none;
+    font-size: 16px;
+    border-radius: 5px;
+    transition: background-color 0.3s;
+  }
+  
+  #download-button:hover {
+    background-color: #3e8e41;
+  }
+  
+  #installation {
+    color: #FFFFFF;
+    background-color: #000000;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+  }
+  
+
+  #documentation {
+    color: #FFFFFF;
+    background-color: #000000;
+    padding: 20px;
+    margin-top: 20px;
+    border-radius: 5px;
+  }
+
+  .dropdown {
+    position: relative;
+    display: inline-block;
+  }
+  
+  .dropdown-content {
+    display: none;
+    position: absolute;
+    z-index: 1;
+  }
+  
+  .dropdown-content a {
+    color: black;
+    padding: 12px 16px;
+    text-decoration: none;
+    display: block;
+  }
+  
+  .dropdown:hover .dropdown-content {
+    display: block;
+  }
+  
+  .dropdown:focus-within .dropdown-content {
+    display: block;
+  }
+  
+  .dropbtn {
+    background-color: #4CAF50;
+    color: white;
+    padding: 16px;
+    font-size: 16px;
+    border: none;
+    cursor: pointer;
+  }
+  
+  .dropbtn:focus {
+    outline: none;
+  }
+  
+  .dropdown:hover .dropbtn {
+    background-color: #3e8e41;
+  }
+  
+  .dropdown:focus-within .dropbtn {
+    background-color: #3e8e41;
+  }

@@ -1,0 +1,29 @@
+{
+    "name": "Discovery Oasis",
+    "version": "1.0",
+    "description": "Discovery Oasis is a powerful Chrome Extension that allows users to search multiple websites at once with just a few clicks. With customizable filters and color-coded tabs, organizing search results has never been easier. Find what you need faster and more efficiently than ever before with Discovery Oasis.",
+    "manifest_version": 3,
+    "author": "gndpwnd",
+
+    "icons": {
+        "128": "icon128.png"
+    },
+    
+    "permissions": [
+        "activeTab",
+        "tabs",
+        "storage"
+    ],
+    
+    "browser_action": {
+        "default_title": "Multi-Search",
+        "default_popup": "popup.html",
+        "default_icon": "icons/icon128.png"
+    },
+    
+    "content_security_policy": "script-src 'self' 'unsafe-eval'; object-src 'self'",
+    "action": {
+        "default_popup": "popup.html"
+    }
+  }
+  
