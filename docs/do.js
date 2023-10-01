@@ -75,17 +75,17 @@ function disco(){
   // for every url list, if the corresponding filter has been checked, open up new tabs for each url
   if (webFilter.checked) {
     for (const element of web_urls) {
-      window.open(""+element, "_blank");
+      window.open(element, "_blank");
     }
   }
   if (scholarFilter.checked) {
     for (const element of scholar_urls) {
-      window.open(""+element, "_blank");
+      window.open(element, "_blank");
     }
   }
   if (databaseFilter.checked) {
     for (const element of database_urls) {
-      window.open(""+element, "_blank");
+      window.open(element, "_blank");
     }
   }
 }
@@ -101,7 +101,7 @@ function discoveryConduct(){
 
   let searchQuery = document.getElementById("search-input").value;
   // replace spaces with plus signs
-  searchQuery = searchQuery.replace(/ /g, "+");
+  searchQuery = encodeURIComponent(searchQuery);
 
   // if search query is blank, show disclaimer and exit
   if (searchQuery == "") {
@@ -111,21 +111,21 @@ function discoveryConduct(){
 
   // make urls for each type of search engine
   for (const element of webSearchEngines) {
-    let url = element + searchQuery;
+    let url = "https://" + element + searchQuery;
     web_urls.push(url);
   }
 
   for (const element of scholarSearchEngines) {
-    let url = element + searchQuery;
+    let url = "https://" + element + searchQuery;
     scholar_urls.push(url);
   }
 
   for (const element of databaseSearchEngines) {
-    let url = element + searchQuery;
+    let url = "https://" + element + searchQuery;
     database_urls.push(url);
   }
 
-  // try to run the chromeDisco function
+  // try to run the disco function
   // if it fails, then show the disclaimer
   try {
     disco();
