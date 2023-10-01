@@ -12,6 +12,10 @@ const webSearchEngines = [
   "www.mojeek.com/search?q=",
   "duckduckgo.com/?q=",
   "www.bing.com/search?q=",
+  // searxng instances - searx.space/
+  "northboot.xyz/search?q=",
+  "searx.fmac.xyz/search?q=",
+  "search.rhscz.eu/search?q=",
 ];
 
 const scholarSearchEngines = [
@@ -21,7 +25,7 @@ const scholarSearchEngines = [
   "www.refseek.com/search?q=",
   "core.ac.uk/search?q=",
   "eric.ed.gov/?q=",
-  "www.base-search.net/Search/Results?oaboost=1&newsearch=1&refid=dcbasen&lookfor=",
+  "www.base-search.net/Search/Results?&lookfor=",
   "www.mendeley.com/search/?query=",
   "www.jurn.link/#gsc.tab=0&gsc.q=",
   "researchworks.oclc.org/archivegrid/?q=",
@@ -29,6 +33,24 @@ const scholarSearchEngines = [
   "fatcat.wiki/release/search?q=",
   "www.econbiz.de/Search/Results?type=AllFields&lookfor=",
   "www.worldcat.org/search?q=",
+  "www.emerald.com/insight/search?q=",
+  "www.loc.gov/search/?q=",
+  "www.ncbi.nlm.nih.gov/pmc/?term=",
+  "www.google.com/search?tbm=bks&q=",
+  "network.bepress.com/explore/?q=",
+  "www.researchgate.net/search/publication?q=",
+  "www.scirp.org/journal/articles.aspx?searchcode=",
+  "www.scopus.com/results/results.uri?sort=plf-f&src=s&st1=",
+  "ieeexplore.ieee.org/search/searchresult.jsp?newsearch=true&queryText=",
+  "www.sciencedirect.com/search?qs=",
+  "www.sciencedirect.com/search?pub=",
+  "www.sciencedirect.com/search?authors=",
+  "core.ac.uk/search?q=",
+  "www.semanticscholar.org/search?sort=relevance&q=",
+  "www.refseek.com/search?q=",
+  "dl.acm.org/action/doSearch?fillQuickSearch=false&target=advanced&expand=dl&field1=AllField&text1=",
+  "dblp.uni-trier.de/search?q=",
+  "www.uptodate.com/contents/search?search=",
 ];
 
 const databaseSearchEngines = [
@@ -53,17 +75,17 @@ function disco(){
   // for every url list, if the corresponding filter has been checked, open up new tabs for each url
   if (webFilter.checked) {
     for (const element of web_urls) {
-      window.open("https://"+element, "_blank");
+      window.open(""+element, "_blank");
     }
   }
   if (scholarFilter.checked) {
     for (const element of scholar_urls) {
-      window.open("https://"+element, "_blank");
+      window.open(""+element, "_blank");
     }
   }
   if (databaseFilter.checked) {
     for (const element of database_urls) {
-      window.open("https://"+element, "_blank");
+      window.open(""+element, "_blank");
     }
   }
 }
