@@ -12,7 +12,7 @@ const webSearchEngines = [
   "www.mojeek.com/search?q=",
   "duckduckgo.com/?q=",
   "www.bing.com/search?q=",
-  // searxng instances - searx.space/
+  // searxng instances - searx.space
   "northboot.xyz/search?q=",
   "searx.fmac.xyz/search?q=",
   "search.rhscz.eu/search?q=",
