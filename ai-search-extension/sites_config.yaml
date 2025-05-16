@@ -1,0 +1,33 @@
+# sites_config.yaml
+# Configuration for multi-site search extension
+# cd ai-search-extension; zip -r extension.zip . -x "*.git*" "extension.zip"
+
+sites:
+  - name: ChatGPT
+    baseUrl: https://chat.openai.com
+    promptField:
+      selector: "#prompt-textarea"
+      type: contenteditable
+    defaultChecked: true
+
+  - name: Deepseek
+    baseUrl: https://chat.deepseek.com/
+    promptField:
+      selector: "#chat-input"
+      type: contenteditable
+    defaultChecked: true
+
+  - name: Claude
+    baseUrl: https://claude.ai/chat
+    promptField:
+      selector: "div[contenteditable='true'].ProseMirror"
+      type: contenteditable
+    defaultChecked: true
+
+  - name: Perplexity
+    baseUrl: https://www.perplexity.ai/
+    promptField:
+      selector: "#ask-input"
+      type: input
+    defaultChecked: false
+    
