@@ -32,19 +32,32 @@ async function openTabs(sites, prompt) {
     });
     
     // Give the page a little extra time to fully initialize JavaScript
-    await new Promise(resolve => setTimeout(resolve, 1000));
+    // Connected Papers may need more time to fully initialize its components
+    const waitTime = site.name === "Connected Papers" ? 2500 : 1500;
+    await new Promise(resolve => setTimeout(resolve, waitTime));
     
     // Inject the content script to fill in the form (without submitting)
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: injectPrompt,
-      args: [prompt, site.promptField]
+      args: [prompt, site.promptField, site.name]
     });
+    
+    // For sites that need extra verification
+    if (site.name === "Connected Papers") {
+      // Give a moment for the input to settle, then check if it worked
+      await new Promise(resolve => setTimeout(resolve, 1000));
+      await chrome.scripting.executeScript({
+        target: { tabId: tab.id },
+        function: verifyInjection,
+        args: [prompt, site.promptField.selector]
+      });
+    }
   }
 }
 
 // Function that will be injected into pages to fill various types of form elements
-function injectPrompt(prompt, promptField) {
+function injectPrompt(prompt, promptField, siteName) {
   return new Promise((resolve, reject) => {
     try {
       // Wait to make sure dynamic elements are loaded
@@ -58,6 +71,8 @@ function injectPrompt(prompt, promptField) {
           return;
         }
         
+        console.log(`Found element for ${siteName}:`, inputElement);
+        
         // Handle different element types and methods
         switch(promptField.type) {
           case 'input':
@@ -67,8 +82,15 @@ function injectPrompt(prompt, promptField) {
             inputElement.dispatchEvent(new Event('input', { bubbles: true }));
             // Also trigger change event for React and similar frameworks
             inputElement.dispatchEvent(new Event('change', { bubbles: true }));
-            // Focus the element
-            inputElement.focus();
+            // For Connected Papers specifically
+            if (siteName === "Connected Papers") {
+              // For frameworks like Vue.js or React that might not respond to normal events
+              inputElement.dispatchEvent(new Event('keyup', { bubbles: true }));
+              inputElement.dispatchEvent(new Event('keydown', { bubbles: true }));
+              inputElement.dispatchEvent(new Event('keypress', { bubbles: true }));
+              // Simulate user typing for frameworks with complex event handling
+              inputElement.focus();
+            }
             break;
             
           case 'contenteditable':
@@ -103,4 +125,35 @@ function injectPrompt(prompt, promptField) {
       reject(error);
     }
   });
+}
+
+// Verify if injection worked correctly
+function verifyInjection(prompt, selector) {
+  const inputElement = document.querySelector(selector);
+  if (inputElement && (!inputElement.value || inputElement.value !== prompt)) {
+    console.log("Injection verification failed. Trying alternative method...");
+    // Try alternative method for stubborn inputs
+    inputElement.value = prompt;
+    
+    // Create and dispatch multiple events to trigger all possible listeners
+    const events = ['input', 'change', 'blur', 'focus', 'keydown', 'keyup', 'keypress'];
+    events.forEach(eventType => {
+      const event = new Event(eventType, { bubbles: true });
+      inputElement.dispatchEvent(event);
+    });
+    
+    // For some frameworks, we need to manually call internal handlers
+    // This is a common pattern in Vue.js apps
+    if (inputElement.__vue__) {
+      console.log("Vue.js detected, trying to update directly");
+      try {
+        // Try to access Vue instance methods if available
+        inputElement.__vue__.$emit('input', prompt);
+      } catch (e) {
+        console.log("Vue direct access failed:", e);
+      }
+    }
+  } else {
+    console.log("Injection verified successfully!");
+  }
 }

@@ -1,7 +1,3 @@
-# sites_config.yaml
-# Configuration for multi-site search extension
-# cd ai-search-extension; zip -r extension.zip . -x "*.git*" "extension.zip"
-
 sites:
   - name: ChatGPT
     baseUrl: https://chat.openai.com
@@ -28,6 +24,69 @@ sites:
     baseUrl: https://www.perplexity.ai/
     promptField:
       selector: "#ask-input"
+      type: contenteditable
+    defaultChecked: true
+
+  - name: Consensus
+    baseUrl: https://consensus.app/
+    promptField:
+      selector: "#s-string"
       type: input
-    defaultChecked: false
-    
+    defaultChecked: true
+
+  - name: Semanticscholar
+    baseUrl: https://www.semanticscholar.org/
+    promptField:
+      selector: ".legacy__input.input.form-input.search-bar__input"
+      type: input
+    defaultChecked: true
+
+  #- name: Connected Papers
+  #  baseUrl: https://www.connectedpapers.com/
+  #  promptField:
+  #    selector: ".autocomplete-searchbar.input-field-button"
+  #    selector: "#searchbar-input"
+  #    type: input
+  #  defaultChecked: true
+
+  - name: Elicit
+    baseUrl: https://elicit.com/
+    promptField:
+      selector: "textarea.chakra-textarea"
+      type: textarea
+    defaultChecked: true
+
+  - name: Anara
+    baseUrl: https://anara.com/new
+    promptField:
+      selector: "textarea[name='input']"
+      type: textarea
+    defaultChecked: true
+
+  - name: Storm Genie
+    baseUrl: https://storm.genie.stanford.edu/
+    promptField:
+      selector: "textarea.textarea.textarea-lg"
+      type: textarea
+    defaultChecked: true
+
+  - name: AI2 Scholar QA
+    baseUrl: https://ai2-scholar-qa.allen.ai/
+    promptField:
+      selector: "textarea[data-testid='message-bar-input']"
+      type: textarea
+    defaultChecked: true
+
+  - name: Paper Finder
+    baseUrl: https://paperfinder.allen.ai/chat
+    promptField:
+      selector: "textarea[data-testid='message-bar-input']"
+      type: textarea
+    defaultChecked: true
+
+  - name: Keenious
+    baseUrl: https://keenious.com/
+    promptField:
+      selector: "textarea#search-textarea"
+      type: contenteditable
+    defaultChecked: true
