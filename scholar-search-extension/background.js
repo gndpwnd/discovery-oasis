@@ -6,7 +6,8 @@
 2. Waits 1.5-2 seconds for initial JavaScript to load
 3. Polls for the element every 250ms until found (or times out after 5 seconds)
 4. Once element is found, fills it with the prompt
-5. For JSTOR, runs verification step with enhanced event handling
+5. Simulates pressing Enter to trigger the search
+6. For JSTOR, runs verification step with enhanced event handling
 
 */
 
@@ -48,7 +49,7 @@ async function openTabs(sites, prompt) {
     const waitTime = (site.name === "JSTOR") ? 3000 : 1500;
     await new Promise(resolve => setTimeout(resolve, waitTime));
     
-    // Inject the content script to fill in the form (without submitting)
+    // Inject the content script to fill in the form and submit it
     await chrome.scripting.executeScript({
       target: { tabId: tab.id },
       function: injectPrompt,
@@ -62,13 +63,13 @@ async function openTabs(sites, prompt) {
       await chrome.scripting.executeScript({
         target: { tabId: tab.id },
         function: verifyInjection,
-        args: [prompt, site.promptField.selector]
+        args: [prompt, site.promptField.selector, site.name]
       });
     }
   }
 }
 
-// Function that will be injected into pages to fill various types of form elements
+// Function that will be injected into pages to fill various types of form elements and submit
 function injectPrompt(prompt, promptField, siteName) {
   return new Promise((resolve, reject) => {
     try {
@@ -106,7 +107,90 @@ function injectPrompt(prompt, promptField, siteName) {
         });
       }
       
-      // Wait for element to appear, then fill it
+      // Function to submit the form
+      function submitForm(inputElement) {
+        // Method 1: Try to find and click the submit button
+        const submitSelectors = [
+          'button[type="submit"]',
+          'input[type="submit"]',
+          'button:contains("Search")',
+          '.search-button',
+          '.search-btn',
+          '[aria-label*="Search"]',
+          '[aria-label*="search"]'
+        ];
+        
+        let submitted = false;
+        
+        // Try to find and click a submit button
+        for (const selector of submitSelectors) {
+          const submitBtn = document.querySelector(selector);
+          if (submitBtn && !submitted) {
+            console.log(`Found submit button for ${siteName}:`, submitBtn);
+            submitBtn.click();
+            submitted = true;
+            break;
+          }
+        }
+        
+        // Method 2: If no submit button found, simulate Enter key press
+        if (!submitted) {
+          console.log(`No submit button found for ${siteName}, simulating Enter key`);
+          
+          // Create Enter key event
+          const enterEvent = new KeyboardEvent('keydown', {
+            key: 'Enter',
+            code: 'Enter',
+            keyCode: 13,
+            which: 13,
+            bubbles: true,
+            cancelable: true
+          });
+          
+          // Dispatch Enter event on the input element
+          inputElement.dispatchEvent(enterEvent);
+          
+          // Also try keyup event
+          const enterUpEvent = new KeyboardEvent('keyup', {
+            key: 'Enter',
+            code: 'Enter',
+            keyCode: 13,
+            which: 13,
+            bubbles: true,
+            cancelable: true
+          });
+          
+          inputElement.dispatchEvent(enterUpEvent);
+        }
+        
+        // Method 3: If still not submitted, try to submit the parent form
+        if (!submitted) {
+          const form = inputElement.closest('form');
+          if (form) {
+            console.log(`Submitting form for ${siteName}:`, form);
+            form.submit();
+            submitted = true;
+          }
+        }
+        
+        // Method 4: Last resort - try common search form selectors
+        if (!submitted) {
+          const formSelectors = ['form[role="search"]', 'form.search', 'form#search', 'form'];
+          for (const selector of formSelectors) {
+            const searchForm = document.querySelector(selector);
+            if (searchForm && searchForm.contains(inputElement)) {
+              console.log(`Found parent form for ${siteName}:`, searchForm);
+              searchForm.submit();
+              submitted = true;
+              break;
+            }
+          }
+        }
+        
+        return submitted;
+      }
+      
+      // Wait for element to appear, then fill it and submit
       waitForElement(promptField.selector)
         .then(inputElement => {
           console.log(`Found element for ${siteName}:`, inputElement);
@@ -114,6 +198,7 @@ function injectPrompt(prompt, promptField, siteName) {
           // Handle different element types and methods
           switch(promptField.type) {
             case 'input':
+            case 'textarea':
               // Handle standard input elements (text, textarea)
               inputElement.value = prompt;
               // Trigger input event to activate any listeners
@@ -156,7 +241,17 @@ function injectPrompt(prompt, promptField, siteName) {
               inputElement.focus();
           }
           
-          resolve();
+          // Wait a brief moment for the input to register, then submit
+          setTimeout(() => {
+            const wasSubmitted = submitForm(inputElement);
+            if (wasSubmitted) {
+              console.log(`Successfully submitted search for ${siteName}`);
+            } else {
+              console.warn(`Could not find submission method for ${siteName}`);
+            }
+            resolve();
+          }, 500); // Wait 500ms before attempting submission
+          
         })
         .catch(error => {
           console.error('Error waiting for element:', error);
@@ -170,8 +265,8 @@ function injectPrompt(prompt, promptField, siteName) {
   });
 }
 
-// Verify if injection worked correctly
-function verifyInjection(prompt, selector) {
+// Verify if injection worked correctly and submit if needed
+function verifyInjection(prompt, selector, siteName) {
   const inputElement = document.querySelector(selector);
   if (inputElement && (!inputElement.value || inputElement.value !== prompt)) {
     console.log("Injection verification failed. Trying alternative method...");
@@ -210,7 +305,41 @@ function verifyInjection(prompt, selector) {
         console.log("React event creation failed:", e);
       }
     }
+    
+    // After fixing the input, try to submit again
+    setTimeout(() => {
+      // Simulate Enter key press for verification
+      const enterEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true
+      });
+      inputElement.dispatchEvent(enterEvent);
+      
+      // Also try form submission
+      const form = inputElement.closest('form');
+      if (form) {
+        form.submit();
+      }
+    }, 500);
+    
   } else {
     console.log("Injection verified successfully!");
+    
+    // Even if injection was successful initially, make sure to submit
+    setTimeout(() => {
+      const enterEvent = new KeyboardEvent('keydown', {
+        key: 'Enter',
+        code: 'Enter',
+        keyCode: 13,
+        which: 13,
+        bubbles: true,
+        cancelable: true
+      });
+      inputElement.dispatchEvent(enterEvent);
+    }, 300);
   }
 }

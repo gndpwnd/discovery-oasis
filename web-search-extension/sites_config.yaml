@@ -1,0 +1,56 @@
+sites:
+  - name: Google
+    baseUrl: https://google.com/
+    promptField:
+      selector: "#APjFqb"
+      type: input
+    defaultChecked: true
+
+  - name: Searx (Tiekoetter)
+    baseUrl: https://searx.tiekoetter.com/
+    promptField:
+      selector: "#q"
+      type: input
+    defaultChecked: true
+
+  - name: Yandex
+    baseUrl: https://yandex.com/
+    promptField:
+      selector: "#text"
+      type: input
+    defaultChecked: true
+
+  - name: DuckDuckGo
+    baseUrl: https://duckduckgo.com/
+    promptField:
+      selector: "#searchbox_input"
+      type: input
+    defaultChecked: true
+
+  - name: Bing
+    baseUrl: https://www.bing.com/
+    promptField:
+      selector: "#sb_form_q"
+      type: input
+    defaultChecked: true
+  
+  - name: Baidu
+    baseUrl: https://www.baidu.com/
+    promptField:
+      selector: "#kw"
+      type: input
+    defaultChecked: true
+
+  - name: Yahoo
+    baseUrl: https://search.yahoo.com/
+    promptField:
+      selector: "#yschsp"
+      type: input
+    defaultChecked: true
+
+  - name: Mojeek
+    baseUrl: https://www.mojeek.com/
+    promptField:
+      selector: ".js-search-input"
+      type: input
+    defaultChecked: true
