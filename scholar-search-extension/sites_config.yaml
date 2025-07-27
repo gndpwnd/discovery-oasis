@@ -1,0 +1,205 @@
+sites:
+#  - name: Web of Science
+#    baseUrl: https://www.webofscience.com/wos/woscc/basic-search?lang=en
+#    promptField:
+#      selector: "textarea[data-ta-id='AllDatabases-input']"
+#      type: input
+#    defaultChecked: true
+
+  - name: Google Scholar
+    baseUrl: https://scholar.google.com/
+    promptField:
+      selector: "#gs_hdr_tsi"
+      type: input
+    defaultChecked: true
+
+  - name: Scopus
+    baseUrl: https://www.scopus.com/pages/home#basic
+    promptField:
+      selector: "input[id^='autosuggest-'][id$='-input']"
+      type: input
+    defaultChecked: true
+
+  - name: ERIC
+    baseUrl: https://eric.ed.gov/
+    promptField:
+      selector: "#s"
+      type: input
+    defaultChecked: true
+
+  - name: IEEE Xplore
+    baseUrl: https://ieeexplore.ieee.org/Xplore/home.jsp
+    promptField:
+      selector: ".Typeahead-input"
+      type: input
+    defaultChecked: true
+
+  - name: ScienceDirect
+    baseUrl: https://www.sciencedirect.com/
+    promptField:
+      selector: "#qs"
+      type: input
+    defaultChecked: true
+
+  - name: DOAJ
+    baseUrl: https://www.doaj.org/
+    promptField:
+      selector: "#keywords"
+      type: input
+    defaultChecked: true
+
+  #- name: JSTOR
+  #  baseUrl: https://www.jstor.org/
+  #  promptField:
+  #    selector: "input[name='Query']"
+  #    type: input
+  #  defaultChecked: true
+
+  - name: CORE
+    baseUrl: https://core.ac.uk/
+    promptField:
+      selector: "#select-search-input"
+      type: input
+    defaultChecked: true
+
+  - name: ScienceOpen
+    baseUrl: https://www.scienceopen.com/
+    promptField:
+      selector: ".so-text-input.so--home"
+      type: input
+    defaultChecked: true
+
+  - name: arXiv
+    baseUrl: https://arxiv.org/
+    promptField:
+      selector: "input[name='query']"
+      type: input
+    defaultChecked: true
+
+  - name: SSRN
+    baseUrl: https://www.ssrn.com/
+    promptField:
+      selector: "#txtKeywords"
+      type: input
+    defaultChecked: true
+
+  - name: BASE
+    baseUrl: https://www.base-search.net/
+    promptField:
+      selector: "#Query"
+      type: input
+    defaultChecked: true
+
+  - name: Zenodo
+    baseUrl: https://zenodo.org/
+    promptField:
+      selector: ".prompt"
+      type: input
+    defaultChecked: true
+
+  - name: Dryad
+    baseUrl: https://datadryad.org/
+    promptField:
+      selector: "#search-field-input1"
+      type: input
+    defaultChecked: true
+
+  - name: British Library Research Repository
+    baseUrl: https://bl.iro.bl.uk/
+    promptField:
+      selector: "#search-field-header"
+      type: input
+    defaultChecked: true
+
+  - name: OpenDOAR
+    baseUrl: https://opendoar.ac.uk/
+    promptField:
+      selector: "#searchTerm"
+      type: input
+    defaultChecked: true
+
+  - name: Science.gov
+    baseUrl: https://www.science.gov/
+    promptField:
+      selector: "#fullRecord"
+      type: input
+    defaultChecked: true
+
+  - name: NASA Technical Reports Server
+    baseUrl: https://ntrs.nasa.gov/
+    promptField:
+      selector: "input[formcontrolname='q']"
+      type: input
+    defaultChecked: true
+  
+  - name: OpenAIRE
+    baseUrl: https://explore.openaire.eu/
+    promptField:
+      selector: ".input.uk-text-truncate"
+      type: input
+    defaultChecked: true
+
+  - name: dblp
+    baseUrl: https://dblp.org/
+    promptField:
+      selector: "input[name='q']"
+      type: input
+    defaultChecked: true
+
+  - name: EconBiz
+    baseUrl: https://www.econbiz.de/
+    promptField:
+      selector: "#searchForm_lookfor"
+      type: input
+    defaultChecked: true
+
+  - name: Paperity
+    baseUrl: https://paperity.org/
+    promptField:
+      selector: "input[name='q']"
+      type: input
+    defaultChecked: true
+
+  - name: EBSCO
+    baseUrl: https://research.ebsco.com/
+    promptField:
+      selector: "#search-input"
+      type: input
+    defaultChecked: true
+
+  - name: Proquest
+    baseUrl: https://www.proquest.com/
+    promptField:
+      selector: "#searchTerm"
+      type: input
+    defaultChecked: true
+
+# other
+
+  - name: BioMed Central
+    baseUrl: https://www.biomedcentral.com/
+    promptField:
+      selector: "#publisherSearch"
+      type: input
+    defaultChecked: false
+  
+  - name: CIA Freedom of Information Act
+    baseUrl: https://www.cia.gov/readingroom/home
+    promptField:
+      selector: "#edit-search-block-form--2"
+      type: input
+    defaultChecked: false
+
+  - name: Open Policy Finder
+    baseUrl: https://openpolicyfinder.jisc.ac.uk/
+    promptField:
+      selector: "#searchTerm"
+      type: input
+    defaultChecked: false
+  
+  - name: PubMed
+    baseUrl: https://pubmed.ncbi.nlm.nih.gov/
+    promptField:
+      selector: "#id_term"
+      type: input
+    defaultChecked: false

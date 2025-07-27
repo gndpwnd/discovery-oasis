@@ -48,6 +48,13 @@ sites:
   #    selector: "#searchbar-input"
   #    type: input
   #  defaultChecked: true
+  
+  - name: Scispace
+    baseUrl: https://www.scispace.com/
+    promptField:
+      selector: "textarea[name='search-input']"
+      type: input
+    defaultChecked: true
 
   - name: Elicit
     baseUrl: https://elicit.com/

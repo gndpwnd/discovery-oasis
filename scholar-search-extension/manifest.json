@@ -1,8 +1,8 @@
 {
   "manifest_version": 3,
-  "name": "Discovery Oasis AI Search",
+  "name": "Discovery Oasis Scholarly Search",
   "version": "1.0",
-  "description": "Search multiple AI sites with a single prompt. Make sure to login to sites that require a login when you select them in a search.",
+  "description": "Search multiple Scholarly sites with a single prompt. Make sure to login to sites that require a login when you select them in a search.",
   "action": {
     "default_popup": "popup.html"
   },

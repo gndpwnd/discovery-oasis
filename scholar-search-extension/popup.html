@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Discovery Oasis AI Search</title>
+  <link rel="stylesheet" href="popup.css">
+  <!-- Add js-yaml library for YAML parsing -->
+  <!-- https://cdnjs.cloudflare.com/ajax/libs/js-yaml/4.1.0/js-yaml.min.js -->
+  <script src="./js-yaml.min.js"></script>
+</head>
+<body>
+  <div class="container">
+    <h1>Discovery Oasis Scholarly Search</h1>
+    
+    <form id="search-form">
+      <div class="input-group">
+        <input type="text" id="prompt-input" placeholder="Enter your prompt..." autofocus>
+        <button type="submit" id="search-button">Search</button>
+      </div>
+    </form>
+    
+    <div class="sites-section">
+      <h2>Select Sites</h2>
+      <div id="sites-container">
+        <!-- Site checkboxes will be generated dynamically from YAML -->
+      </div>
+    </div>
+    
+    <div class="debug-mode">
+      <label for="debug-checkbox">
+        <input type="checkbox" id="debug-checkbox"> Debug Mode
+      </label>
+      <div class="debug-info">
+        Activates selector highlighting to help with configuration
+      </div>
+    </div>
+    
+    <div id="status" class="status"></div>
+  </div>
+  
+  <!-- Load our script for the popup functionality -->
+  <script src="popup.js"></script>
+</body>
+</html>
