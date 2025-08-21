@@ -7,8 +7,42 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   } else if (request.action === 'downloadTranscript') {
     downloadTranscript(request.video).then(sendResponse);
     return true;
+  } else if (request.action === 'getCourseTitle') {
+    getCourseTitle().then(sendResponse);
+    return true;
   }
 });
+
+async function getCourseTitle() {
+  try {
+    // Try multiple selectors for course title
+    let titleElement = document.querySelector('.classroom-nav__title');
+    
+    if (!titleElement) {
+      titleElement = document.querySelector('.course-header__title');
+    }
+    
+    if (!titleElement) {
+      titleElement = document.querySelector('h1[data-live-test="course-title"]');
+    }
+    
+    if (!titleElement) {
+      titleElement = document.querySelector('.top-card-layout__title h1');
+    }
+    
+    let courseTitle = 'LinkedIn-Learning-Course';
+    
+    if (titleElement) {
+      courseTitle = titleElement.textContent.trim();
+      // Clean up the title for use as filename
+      courseTitle = courseTitle.replace(/[<>:"/\\|?*]/g, '').replace(/\s+/g, '-');
+    }
+    
+    return { success: true, courseTitle: courseTitle };
+  } catch (error) {
+    return { success: false, courseTitle: 'LinkedIn-Learning-Course' };
+  }
+}
 
 async function getVideoList() {
   try {

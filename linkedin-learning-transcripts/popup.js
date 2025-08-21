@@ -199,20 +199,34 @@ document.addEventListener('DOMContentLoaded', function() {
       return;
     }
 
+    // Get course name for organized folder structure
+    const courseTitle = await getCourseTitle();
+
     // Start download in background
     try {
       await chrome.runtime.sendMessage({
         action: 'startDownload',
-        selectedVideos: selectedVideos
+        selectedVideos: selectedVideos,
+        courseTitle: courseTitle
       });
       
-      showStatus('Download started in background! You can close this popup or switch tabs.', 'info');
+      showStatus('Download started in background! Files will be saved to your Downloads folder. You can close this popup or switch tabs.', 'info');
       
       // Start monitoring progress
       startProgressMonitoring();
       
     } catch (error) {
       showStatus('Error starting download: ' + error.message, 'error');
+    }
+  }
+
+  async function getCourseTitle() {
+    try {
+      const [tab] = await chrome.tabs.query({active: true, currentWindow: true});
+      const result = await chrome.tabs.sendMessage(tab.id, {action: 'getCourseTitle'});
+      return result.courseTitle || 'LinkedIn-Learning-Course';
+    } catch (error) {
+      return 'LinkedIn-Learning-Course';
     }
   }
 

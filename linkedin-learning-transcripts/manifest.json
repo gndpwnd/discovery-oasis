@@ -8,6 +8,9 @@
     "storage",
     "downloads"
   ],
+  "optional_permissions": [
+    "downloads.shelf"
+  ],
   "action": {
     "default_popup": "popup.html",
     "default_title": "Download Course Transcripts"

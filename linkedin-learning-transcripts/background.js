@@ -18,7 +18,7 @@ let downloadState = {
 // Listen for messages from popup
 chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   if (request.action === 'startDownload') {
-    startBackgroundDownload(request.selectedVideos);
+    startBackgroundDownload(request.selectedVideos, request.courseTitle);
     sendResponse({ success: true });
   } else if (request.action === 'getDownloadStatus') {
     sendResponse(downloadState);
@@ -29,7 +29,7 @@ chrome.runtime.onMessage.addListener((request, sender, sendResponse) => {
   return true;
 });
 
-async function startBackgroundDownload(selectedVideos) {
+async function startBackgroundDownload(selectedVideos, courseTitle = 'LinkedIn-Learning-Course') {
   if (downloadState.isDownloading) {
     return;
   }
@@ -109,7 +109,7 @@ async function startBackgroundDownload(selectedVideos) {
       
       // Download the section file if we got any transcripts
       if (sectionTranscripts.length > 0) {
-        await downloadSectionFile(sectionTitle, sectionTranscripts);
+        await downloadSectionFile(sectionTitle, sectionTranscripts, courseTitle, downloadState.progress.sectionsProcessed + 1);
       }
       
       downloadState.progress.sectionsProcessed++;
@@ -136,15 +136,26 @@ function groupVideosBySection(videos) {
   return grouped;
 }
 
-function formatSectionFileName(sectionTitle) {
-  return sectionTitle
-    .replace(/\.\s+/g, '-')
-    .replace(/\s+/g, '_')
-    .replace(/[^\w\-_.]/g, '')
-    + '.md';
+function sanitizeFilename(filename) {
+  return filename
+    .replace(/[<>:"/\\|?*]/g, '') // Remove invalid characters
+    .replace(/\s+/g, '-') // Replace spaces with hyphens
+    .replace(/\.+/g, '.') // Replace multiple dots with single dot
+    .replace(/^\.+|\.+$/g, '') // Remove leading/trailing dots
+    .substring(0, 200); // Limit length
 }
 
-async function downloadSectionFile(sectionTitle, transcripts) {
+function formatSectionFileName(sectionTitle, courseTitle, sectionNumber) {
+  const sanitizedCourse = sanitizeFilename(courseTitle);
+  const sanitizedSection = sanitizeFilename(sectionTitle);
+  
+  // Create organized filename: Course/Section-Number-Section-Name.md
+  const filename = `${sanitizedCourse}/${sectionNumber.toString().padStart(2, '0')}-${sanitizedSection}.md`;
+  
+  return filename;
+}
+
+async function downloadSectionFile(sectionTitle, transcripts, courseTitle, sectionNumber) {
   const markdown = `# ${sectionTitle}\n\n` + 
     transcripts.map(t => `## ${t.title}\n\n${t.transcript}`).join('\n\n---\n\n');
   
@@ -152,12 +163,17 @@ async function downloadSectionFile(sectionTitle, transcripts) {
   const base64Data = btoa(unescape(encodeURIComponent(markdown)));
   const dataUrl = `data:text/markdown;charset=utf-8;base64,${base64Data}`;
   
+  const filename = formatSectionFileName(sectionTitle, courseTitle, sectionNumber);
+  
   try {
     await chrome.downloads.download({
       url: dataUrl,
-      filename: formatSectionFileName(sectionTitle),
-      saveAs: false
+      filename: filename,
+      saveAs: false, // Don't prompt for location
+      conflictAction: 'uniquify' // Automatically handle filename conflicts
     });
+    
+    console.log(`Downloaded: ${filename}`);
   } catch (error) {
     console.error('Download failed:', error);
   }
