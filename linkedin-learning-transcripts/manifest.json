@@ -1,0 +1,24 @@
+{
+  "manifest_version": 3,
+  "name": "LinkedIn Learning Transcript Downloader",
+  "version": "1.0",
+  "description": "Download comprehensive transcripts from LinkedIn Learning courses",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads"
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Download Course Transcripts"
+  },
+  "content_scripts": [
+    {
+      "matches": ["*://www.linkedin.com/learning/*"],
+      "js": ["content.js"]
+    }
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
+}
