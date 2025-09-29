@@ -1,0 +1,131 @@
+{
+  "formName": "My Information",
+  "fields": [
+    {
+      "label": "How Did You Hear About Us?",
+      "type": "multiselect",
+      "id": "source--source",
+      "name": "source",
+      "value": ["College/University"]
+    },
+    {
+      "label": "Have you ever been previously employed by Teledyne or FLIR?",
+      "type": "radio",
+      "name": "candidateIsPreviousWorker",
+      "options": ["Yes", "No"],
+      "value": "No"
+    },
+    {
+      "label": "Country",
+      "type": "dropdown",
+      "id": "country--country",
+      "name": "country",
+      "value": "United States of America"
+    },
+    {
+      "section": "Legal Name",
+      "fields": [
+        {
+          "label": "First Name",
+          "type": "text",
+          "id": "name--legalName--firstName",
+          "name": "legalName--firstName",
+          "value": "Gatlin"
+        },
+        {
+          "label": "Middle Name",
+          "type": "text",
+          "id": "name--legalName--middleName",
+          "name": "legalName--middleName",
+          "value": ""
+        },
+        {
+          "label": "Last Name",
+          "type": "text",
+          "id": "name--legalName--lastName",
+          "name": "legalName--lastName",
+          "value": "Nelson"
+        },
+        {
+          "label": "I have a preferred name",
+          "type": "checkbox",
+          "id": "name--preferredCheck",
+          "name": "preferredCheck",
+          "value": false
+        }
+      ]
+    },
+    {
+      "section": "Address",
+      "fields": [
+        {
+          "label": "Address Line 1",
+          "type": "text",
+          "id": "address--addressLine1",
+          "name": "addressLine1",
+          "value": "150 Acklins Cir"
+        },
+        {
+          "label": "Address Line 2",
+          "type": "text",
+          "id": "address--addressLine2",
+          "name": "addressLine2",
+          "value": "Unit 310"
+        },
+        {
+          "label": "City",
+          "type": "text",
+          "id": "address--city",
+          "name": "city",
+          "value": "Dayton Beach"
+        },
+        {
+          "label": "State",
+          "type": "dropdown",
+          "id": "address--countryRegion",
+          "name": "countryRegion",
+          "value": "Florida"
+        },
+        {
+          "label": "Postal Code",
+          "type": "text",
+          "id": "address--postalCode",
+          "name": "postalCode",
+          "value": "32119"
+        }
+      ]
+    },
+    {
+      "section": "Email Address",
+      "fields": [
+        {
+          "label": "Email",
+          "type": "text",
+          "id": "emailAddress",
+          "name": "emailAddress",
+          "value": "gnelsonbusi@gmail.com",
+          "readonly": true
+        }
+      ]
+    },
+    {
+      "section": "Phone",
+      "fields": [
+        {
+          "label": "Phone Device Type",
+          "type": "dropdown",
+          "id": "phoneNumber--phoneType",
+          "name": "phoneType",
+          "value": "Mobile"
+        },
+        {
+          "label": "Country Phone Code",
+          "type": "multiselect",
+          "id": "phoneNumber--countryPhoneCode",
+          "name": "countryPhoneCode",
+          "value": ["United States of America (+1)"]
+        }
+      ]
+    }
+  ]
+}

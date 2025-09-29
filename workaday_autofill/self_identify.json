@@ -1,0 +1,80 @@
+{
+  "formName": "Self Identify",
+  "sections": [
+    {
+      "section": "Voluntary Self-Identification of Disability",
+      "formDetails": {
+        "formNumber": "CC-305",
+        "ombControlNumber": "1250-0005",
+        "expirationDate": "04/30/2026"
+      },
+      "fields": [
+        {
+          "label": "Language",
+          "type": "dropdown",
+          "id": "selfIdentifiedDisabilityData--disabilityForm",
+          "name": "disabilityForm",
+          "required": true,
+          "value": "English"
+        },
+        {
+          "label": "Name",
+          "type": "text",
+          "id": "selfIdentifiedDisabilityData--name",
+          "name": "name",
+          "required": true,
+          "value": "Gatlin Nelson"
+        },
+        {
+          "label": "Employee ID (if applicable)",
+          "type": "text",
+          "id": "selfIdentifiedDisabilityData--employeeId",
+          "name": "employeeId",
+          "required": false,
+          "value": ""
+        },
+        {
+          "label": "Date",
+          "type": "date",
+          "id": "selfIdentifiedDisabilityData--dateSignedOn",
+          "name": "dateSignedOn",
+          "required": true,
+          "value": "today",
+          "dateComponents": {
+            "month": "9",
+            "day": "28",
+            "year": "2025"
+          }
+        },
+        {
+          "label": "Please check one of the boxes below:",
+          "type": "checkbox-group",
+          "id": "selfIdentifiedDisabilityData--disabilityStatus",
+          "name": "disabilityStatus",
+          "required": true,
+          "options": [
+            {
+              "id": "64cbff5f364f10000ae7a421cf210000-disabilityStatus",
+              "label": "Yes, I have a disability, or have had one in the past",
+              "value": false,
+              "disabled": true
+            },
+            {
+              "id": "64cbff5f364f10000aeec521b4ec0000-disabilityStatus",
+              "label": "No, I do not have a disability and have not had one in the past",
+              "value": true,
+              "disabled": false
+            },
+            {
+              "id": "64cbff5f364f10000af3af293a050000-disabilityStatus",
+              "label": "I do not want to answer",
+              "value": false,
+              "disabled": true
+            }
+          ],
+          "selectedValue": "No, I do not have a disability and have not had one in the past"
+        }
+      ]
+    }
+  ]
+}

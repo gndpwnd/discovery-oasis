@@ -1,0 +1,106 @@
+{
+  "formName": "Application Questions",
+  "fields": [
+    {
+      "label": "When are you available to start?",
+      "type": "date",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb3ff7c5520000",
+      "name": "72e2ba97b71b1001faeb3ff7c5520000",
+      "required": false,
+      "value": "9/28/2025",
+      "dateComponents": {
+        "month": "9",
+        "day": "28",
+        "year": "2025"
+      }
+    },
+    {
+      "label": "What is the notice period you need to give your current employer?",
+      "type": "textarea",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb3ff7c5520001",
+      "name": "72e2ba97b71b1001faeb3ff7c5520001",
+      "required": false,
+      "value": "None"
+    },
+    {
+      "label": "Based on the job description, what are your salary expectations for this role?",
+      "type": "textarea",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb3ff7c5520002",
+      "name": "72e2ba97b71b1001faeb3ff7c5520002",
+      "required": true,
+      "value": "30/hr"
+    },
+    {
+      "label": "Please describe any skills or prior experience you have directly related to the requirements of this position.",
+      "type": "textarea",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb3ff7c5520003",
+      "name": "72e2ba97b71b1001faeb3ff7c5520003",
+      "required": false,
+      "value": "I bring a diverse technical background and hands-on experience that aligns closely with the responsibilities of this position. I have worked extensively with hardware and software platforms such as Arduino, Raspberry Pi, C, C++, and Python for developing and testing prototypes, integrating sensors, and conducting performance evaluations. My experience with Matlab and data analysis tools supports research, performance testing, and continuous improvement initiatives. I also have a strong foundation in creating and maintaining technical documentation, procedures, and schematics, supported by my skills in Git/GitHub, Markdown, and Microsoft Office applications. My background in robotics, real-time systems, and systems engineering gives me practical experience in designing, assembling, and testing innovative solutions. In addition, I am certified in cybersecurity (ISC2 Certified in Cybersecurity, CompTIA A+) and experienced with Linux, Bash, PowerShell, and Windows, giving me a strong ability to troubleshoot systems and ensure reliable operations. My research skills, problem-solving ability, and experience with process improvement align with conducting research on competitive products and developing innovative test fixtures and methods. Beyond my technical skills, I bring leadership, teamwork, and communication experience through project management, mentoring, and collaborative projects. I pride myself on being detail-oriented, adaptable, and results-driven, with a continuous improvement mindset. I believe this combination of technical expertise and collaborative skills positions me to contribute meaningfully to this company."
+    },
+    {
+      "label": "Are you willing to relocate, if required?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb3ff7c5520004",
+      "name": "72e2ba97b71b1001faeb3ff7c5520004",
+      "required": false,
+      "value": "Yes"
+    },
+    {
+      "label": "Do you have any relatives employed by Teledyne?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb4091b4d20001",
+      "name": "72e2ba97b71b1001faeb4091b4d20001",
+      "required": true,
+      "value": "No"
+    },
+    {
+      "label": "Are you currently bound by any non-compete or non-solicit agreement?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb4091b4d20005",
+      "name": "72e2ba97b71b1001faeb4091b4d20005",
+      "required": true,
+      "value": "No"
+    },
+    {
+      "label": "Are you now or have you ever been an employee of the United States Government and/or do you have any close friends or family who are working directly in a decision making capacity on any Teledyne contract?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001fafee479c8430000",
+      "name": "72e2ba97b71b1001fafee479c8430000",
+      "required": true,
+      "value": "No"
+    },
+    {
+      "label": "Have you ever applied for and/or been granted a Security Clearance?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb41c558d00004",
+      "name": "72e2ba97b71b1001faeb41c558d00004",
+      "required": true,
+      "value": "No"
+    },
+    {
+      "label": "If hired, can you submit verification of your legal right to work in the United States?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb41c558d0000a",
+      "name": "72e2ba97b71b1001faeb41c558d0000a",
+      "required": true,
+      "value": "Yes"
+    },
+    {
+      "label": "Will you now or in the future require sponsorship for employment visa status (e.g., H-1B visa status)?",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb425f4f3b0002",
+      "name": "72e2ba97b71b1001faeb425f4f3b0002",
+      "required": true,
+      "value": "No"
+    },
+    {
+      "label": "Checking \"I Accept\" indicates your consent and authorization for Teledyne and its designated employees and consultants to collect and use the information you submit in considering you for job opportunities at Teledyne.",
+      "type": "dropdown",
+      "id": "primaryQuestionnaire--72e2ba97b71b1001faeb425f4f3b0005",
+      "name": "72e2ba97b71b1001faeb425f4f3b0005",
+      "required": true,
+      "value": "I Accept"
+    }
+]
+}

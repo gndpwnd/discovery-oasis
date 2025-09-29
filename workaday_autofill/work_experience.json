@@ -1,0 +1,545 @@
+{
+  "formName": "Work Experience",
+  "sections": [
+    {
+      "section": "Work Experience",
+      "entries": [
+        {
+          "entryNumber": 1,
+          "id": "workExperience-149",
+          "fields": [
+            {
+              "label": "Job Title",
+              "type": "text",
+              "id": "workExperience-149--jobTitle",
+              "name": "jobTitle",
+              "required": true,
+              "value": "SkyTracker Research Assistant"
+            },
+            {
+              "label": "Company",
+              "type": "text",
+              "id": "workExperience-149--companyName",
+              "name": "companyName",
+              "required": true,
+              "value": "Embry Riddle Aeronautical University, College of Engineering, Energy Systems Lab"
+            },
+            {
+              "label": "Location",
+              "type": "text",
+              "id": "workExperience-149--location",
+              "name": "location",
+              "required": false,
+              "value": "Daytona Beach FL"
+            },
+            {
+              "label": "I currently work here",
+              "type": "checkbox",
+              "id": "workExperience-149--currentlyWorkHere",
+              "name": "currentlyWorkHere",
+              "required": false,
+              "value": true
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "workExperience-149--startDate",
+              "name": "startDate",
+              "required": true,
+              "value": "1/2025"
+            },
+            {
+              "label": "Role Description",
+              "type": "textarea",
+              "id": "workExperience-149--roleDescription",
+              "name": "roleDescription",
+              "required": false,
+              "value": "● Working in a team to design and implement a comprehensive real-time system for situational\nawareness for aerial vehicles in any pre-defined geographical area.\n● https://tinyurl.com/yhd4ffd3"
+            }
+          ]
+        },
+        {
+          "entryNumber": 2,
+          "id": "workExperience-150",
+          "fields": [
+            {
+              "label": "Job Title",
+              "type": "text",
+              "id": "workExperience-150--jobTitle",
+              "name": "jobTitle",
+              "required": true,
+              "value": "CARS IMASS with LLM-Enhanced Cyber-Resilient Design Research Assistant"
+            },
+            {
+              "label": "Company",
+              "type": "text",
+              "id": "workExperience-150--companyName",
+              "name": "companyName",
+              "required": true,
+              "value": "Embry-Riddle Aeronautical University"
+            },
+            {
+              "label": "Location",
+              "type": "text",
+              "id": "workExperience-150--location",
+              "name": "location",
+              "required": false,
+              "value": "Daytona Beach FL"
+            },
+            {
+              "label": "I currently work here",
+              "type": "checkbox",
+              "id": "workExperience-150--currentlyWorkHere",
+              "name": "currentlyWorkHere",
+              "required": false,
+              "value": true
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "workExperience-150--startDate",
+              "name": "startDate",
+              "required": true,
+              "value": "4/2025"
+            },
+            {
+              "label": "Role Description",
+              "type": "textarea",
+              "id": "workExperience-150--roleDescription",
+              "name": "roleDescription",
+              "required": false,
+              "value": "● Working in a team to demonstrate LLM interactions with humans and multi-agent systems.\n● Utilizing Matplotlib and other Python libraries for data analysis to develop visual simulations.\n● Utilizing Python Flask with HTML, CSS, and JavaScript to create a chat app for the user interface.\n● Utilizing hybrid storage with PostgreSQL and Qdrant to create Retrieval Augmented Generation.\n● Applying algorithmic processing for agents to optimize LLM usage.\n● Applying a theoretical LLM-enabled system to GPS-Denied Rover Land Survey\n● Researching open-source VTOL flight controller software for programmable drone hardware.\n● https://github.com/gndpwnd/CARS_sim_2_ollama"
+            }
+          ]
+        },
+        {
+          "entryNumber": 3,
+          "id": "workExperience-151",
+          "fields": [
+            {
+              "label": "Job Title",
+              "type": "text",
+              "id": "workExperience-151--jobTitle",
+              "name": "jobTitle",
+              "required": true,
+              "value": "Experiment Research Assistant"
+            },
+            {
+              "label": "Company",
+              "type": "text",
+              "id": "workExperience-151--companyName",
+              "name": "companyName",
+              "required": true,
+              "value": "Mat Su College Robotics Laboratory"
+            },
+            {
+              "label": "Location",
+              "type": "text",
+              "id": "workExperience-151--location",
+              "name": "location",
+              "required": false,
+              "value": "Palmer AK"
+            },
+            {
+              "label": "I currently work here",
+              "type": "checkbox",
+              "id": "workExperience-151--currentlyWorkHere",
+              "name": "currentlyWorkHere",
+              "required": false,
+              "value": false
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "workExperience-151--startDate",
+              "name": "startDate",
+              "required": true,
+              "value": "1/2024"
+            },
+            {
+              "label": "To",
+              "type": "date",
+              "id": "workExperience-151--endDate",
+              "name": "endDate",
+              "required": true,
+              "value": "1/2025"
+            },
+            {
+              "label": "Role Description",
+              "type": "textarea",
+              "id": "workExperience-151--roleDescription",
+              "name": "roleDescription",
+              "required": false,
+              "value": "● Worked in a team to physically apply Newton's law of universal gravitation for entry in the 2025 NASA RockSat-C program.\n● Utilized Arduino libraries and C++ to interact with sensors to collect and communicate data for acceleration, angular velocity, and magnetic field in three dimensions.\n● Used Matlab to calculate quaternions and acceleration matrices to rotate rocket vectors to the Earth's frame of reference."
+            }
+          ]
+        },
+        {
+          "entryNumber": 4,
+          "id": "workExperience-152",
+          "fields": [
+            {
+              "label": "Job Title",
+              "type": "text",
+              "id": "workExperience-152--jobTitle",
+              "name": "jobTitle",
+              "required": true,
+              "value": "Trail Maintenance Technician II"
+            },
+            {
+              "label": "Company",
+              "type": "text",
+              "id": "workExperience-152--companyName",
+              "name": "companyName",
+              "required": true,
+              "value": "Mat-Su Borough"
+            },
+            {
+              "label": "Location",
+              "type": "text",
+              "id": "workExperience-152--location",
+              "name": "location",
+              "required": false,
+              "value": "Palmer AK"
+            },
+            {
+              "label": "I currently work here",
+              "type": "checkbox",
+              "id": "workExperience-152--currentlyWorkHere",
+              "name": "currentlyWorkHere",
+              "required": false,
+              "value": false
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "workExperience-152--startDate",
+              "name": "startDate",
+              "required": true,
+              "value": "4/2025"
+            },
+            {
+              "label": "To",
+              "type": "date",
+              "id": "workExperience-152--endDate",
+              "name": "endDate",
+              "required": true,
+              "value": "8/2025"
+            },
+            {
+              "label": "Role Description",
+              "type": "textarea",
+              "id": "workExperience-152--roleDescription",
+              "name": "roleDescription",
+              "required": false,
+              "value": "● Led a team of trail maintenance technicians to construct and maintain outdoor recreational trails across the Mat-Su Borough in remote and suburban locations.\n● Operated and advised on woodworking and metalworking power tools, chainsaws, ATVs, and heavy machinery.\n● Received training for and led basic rigging operations and safety, including draglines and dynamic highlines."
+            }
+          ]
+        },
+        {
+          "entryNumber": 5,
+          "id": "workExperience-153",
+          "fields": [
+            {
+              "label": "Job Title",
+              "type": "text",
+              "id": "workExperience-153--jobTitle",
+              "name": "jobTitle",
+              "required": true,
+              "value": "Trail Maintenance Technician I"
+            },
+            {
+              "label": "Company",
+              "type": "text",
+              "id": "workExperience-153--companyName",
+              "name": "companyName",
+              "required": true,
+              "value": "Mat-Su Borough"
+            },
+            {
+              "label": "Location",
+              "type": "text",
+              "id": "workExperience-153--location",
+              "name": "location",
+              "required": false,
+              "value": "Palmer AK"
+            },
+            {
+              "label": "I currently work here",
+              "type": "checkbox",
+              "id": "workExperience-153--currentlyWorkHere",
+              "name": "currentlyWorkHere",
+              "required": false,
+              "value": false
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "workExperience-153--startDate",
+              "name": "startDate",
+              "required": true,
+              "value": "4/2022"
+            },
+            {
+              "label": "To",
+              "type": "date",
+              "id": "workExperience-153--endDate",
+              "name": "endDate",
+              "required": true,
+              "value": "1/2024"
+            },
+            {
+              "label": "Role Description",
+              "type": "textarea",
+              "id": "workExperience-153--roleDescription",
+              "name": "roleDescription",
+              "required": false,
+              "value": "Maintained outdoor recreational trails across the Mat-Su Borough in remote and suburban locations.\n● Operated woodworking and metalworking power tools, chainsaws, ATVs, and heavy machinery.\n● Provided basic vehicle maintenance to comply with regulations of the Mat-Su Borough and the State of Alaska.\n● Received certifications in Wilderness First Aid and CPR"
+            }
+          ]
+        },
+        {
+          "entryNumber": 6,
+          "id": "workExperience-154",
+          "fields": [
+            {
+              "label": "Job Title",
+              "type": "text",
+              "id": "workExperience-154--jobTitle",
+              "name": "jobTitle",
+              "required": true,
+              "value": "Student Teaching Assistant"
+            },
+            {
+              "label": "Company",
+              "type": "text",
+              "id": "workExperience-154--companyName",
+              "name": "companyName",
+              "required": true,
+              "value": "Mat-Su College Robotics Lab"
+            },
+            {
+              "label": "Location",
+              "type": "text",
+              "id": "workExperience-154--location",
+              "name": "location",
+              "required": false,
+              "value": "Palmer AK"
+            },
+            {
+              "label": "I currently work here",
+              "type": "checkbox",
+              "id": "workExperience-154--currentlyWorkHere",
+              "name": "currentlyWorkHere",
+              "required": false,
+              "value": false
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "workExperience-154--startDate",
+              "name": "startDate",
+              "required": true,
+              "value": "1/2021"
+            },
+            {
+              "label": "To",
+              "type": "date",
+              "id": "workExperience-154--endDate",
+              "name": "endDate",
+              "required": true,
+              "value": "1/2023"
+            },
+            {
+              "label": "Role Description",
+              "type": "textarea",
+              "id": "workExperience-154--roleDescription",
+              "name": "roleDescription",
+              "required": false,
+              "value": "Assisted with applications for and received $70,000 of academic grant funding.\n● Advised purchasing of equipment and materials for the robotics laboratory.\n● Provided technical support for lab computers, 3D printers, and networking equipment.\n● Fulfilled liaison position between the laboratory and the student government.\n● Assisted students with the design, programming, and assembly of robotics projects."
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Education",
+      "entries": [
+        {
+          "entryNumber": 1,
+          "id": "education-180",
+          "fields": [
+            {
+              "label": "School or University",
+              "type": "text",
+              "id": "education-180--schoolName",
+              "name": "schoolName",
+              "required": true,
+              "value": "Embry-Riddle Aeronautical University"
+            },
+            {
+              "label": "Degree",
+              "type": "dropdown",
+              "id": "education-180--degree",
+              "name": "degree",
+              "required": true,
+              "value": "Bachelors"
+            },
+            {
+              "label": "Field of Study",
+              "type": "multiselect",
+              "id": "education-180--fieldOfStudy",
+              "name": "fieldOfStudy",
+              "required": false,
+              "value": ["Computer Engineering"]
+            },
+            {
+              "label": "Overall Result (GPA)",
+              "type": "text",
+              "id": "education-180--gradeAverage",
+              "name": "gradeAverage",
+              "required": false,
+              "value": "3.2"
+            },
+            {
+              "label": "From",
+              "type": "date",
+              "id": "education-180--firstYearAttended",
+              "name": "firstYearAttended",
+              "required": false,
+              "value": "2023"
+            },
+            {
+              "label": "To (Actual or Expected)",
+              "type": "date",
+              "id": "education-180--lastYearAttended",
+              "name": "lastYearAttended",
+              "required": false,
+              "value": "2027"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Certifications",
+      "entries": []
+    },
+    {
+      "section": "Languages",
+      "entries": [
+        {
+          "entryNumber": 1,
+          "id": "language-293",
+          "fields": [
+            {
+              "label": "Language",
+              "type": "dropdown",
+              "id": "language-293--language",
+              "name": "language",
+              "required": true,
+              "value": "English"
+            },
+            {
+              "label": "I am fluent in this language.",
+              "type": "checkbox",
+              "id": "language-293--native",
+              "name": "native",
+              "required": false,
+              "value": true
+            },
+            {
+              "label": "Comprehension",
+              "type": "dropdown",
+              "id": "language-293--0afadd2a2a00450e9d0f188039d1a2bb",
+              "name": "0afadd2a2a00450e9d0f188039d1a2bb",
+              "required": true,
+              "value": "5 - Fluent"
+            },
+            {
+              "label": "Overall",
+              "type": "dropdown",
+              "id": "language-293--4cbbe37391784f12938e090cc64ffde1",
+              "name": "4cbbe37391784f12938e090cc64ffde1",
+              "required": true,
+              "value": "5 - Fluent"
+            },
+            {
+              "label": "Reading",
+              "type": "dropdown",
+              "id": "language-293--a41423f7146746398c7158c188fc003e",
+              "name": "a41423f7146746398c7158c188fc003e",
+              "required": true,
+              "value": "5 - Fluent"
+            },
+            {
+              "label": "Speaking",
+              "type": "dropdown",
+              "id": "language-293--eea4e93739c549ab8889e7569a33a759",
+              "name": "eea4e93739c549ab8889e7569a33a759",
+              "required": true,
+              "value": "5 - Fluent"
+            },
+            {
+              "label": "Writing",
+              "type": "dropdown",
+              "id": "language-293--e54dc2ce928c41e3992ec1e8ca3641d5",
+              "name": "e54dc2ce928c41e3992ec1e8ca3641d5",
+              "required": true,
+              "value": "5 - Fluent"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Skills",
+      "fields": [
+        {
+          "label": "Type to Add Skills",
+          "type": "multiselect",
+          "id": "skills--skills",
+          "name": "skills",
+          "required": false,
+          "value": []
+        }
+      ]
+    },
+    {
+      "section": "Resume/CV",
+      "fields": [
+        {
+          "label": "Upload a file (5MB max)",
+          "type": "file",
+          "id": "resumeAttachments--attachments",
+          "name": "attachments",
+          "required": true,
+          "uploadedFiles": [
+            {
+              "name": "Gatlin Nelson Resume.docx.pdf",
+              "size": "254.35 KB",
+              "status": "uploaded"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "section": "Websites",
+      "entries": []
+    },
+    {
+      "section": "Social Network URLs",
+      "fields": [
+        {
+          "label": "LinkedIn",
+          "type": "text",
+          "id": "socialNetworkAccounts--linkedInAccount",
+          "name": "linkedInAccount",
+          "required": false,
+          "value": "www.linkedin.com/in/gatlin-nelson"
+        }
+      ]
+    }
+  ]
+}

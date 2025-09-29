@@ -1,0 +1,55 @@
+{
+  "formName": "Voluntary Disclosures",
+  "sections": [
+    {
+      "section": "Personal Data Statement",
+      "fields": [
+        {
+          "label": "Veteran Status (see above for descriptions):",
+          "type": "dropdown",
+          "id": "personalInfoUS--veteranStatus",
+          "name": "veteranStatus",
+          "required": true,
+          "value": "I AM NOT A VETERAN"
+        },
+        {
+          "label": "Hispanic or Latino?",
+          "type": "dropdown",
+          "id": "personalInfoUS--hispanicOrLatino",
+          "name": "hispanicOrLatino",
+          "required": false,
+          "value": "No"
+        },
+        {
+          "label": "Ethnicity:",
+          "type": "dropdown",
+          "id": "personalInfoUS--ethnicity",
+          "name": "ethnicity",
+          "required": true,
+          "value": "White (Not Hispanic or Latino) (United States of America)"
+        },
+        {
+          "label": "Gender:",
+          "type": "dropdown",
+          "id": "personalInfoUS--gender",
+          "name": "gender",
+          "required": true,
+          "value": "Not declared"
+        }
+      ]
+    },
+    {
+      "section": "Terms and Conditions",
+      "fields": [
+        {
+          "label": "Yes, I have read and consent to the terms and conditions",
+          "type": "checkbox",
+          "id": "termsAndConditions--acceptTermsAndAgreements",
+          "name": "acceptTermsAndAgreements",
+          "required": true,
+          "value": true
+        }
+      ]
+    }
+  ]
+}
