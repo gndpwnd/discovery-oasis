@@ -1,0 +1,24 @@
+# requirements.txt - Python package dependencies
+
+# Core FastAPI and web server
+fastapi
+uvicorn[standard]
+python-multipart
+pydantic
+
+# FastMCP for Model Context Protocol
+fastmcp
+
+# HTTP client for Ollama
+aiohttp
+httpx
+
+# File system monitoring
+watchdog
+
+# Logging and utilities
+python-dotenv
+
+# Optional: Vector database for enhanced RAG (uncomment if needed)
+# chromadb
+# sentence-transformers

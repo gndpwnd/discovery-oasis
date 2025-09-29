@@ -11,8 +11,8 @@ class LLMService:
     """Service for interacting with Ollama LLM"""
     
     def __init__(self, 
-                 base_url: str = "http://localhost:11434",
-                 model: str = "llama3.2",
+                 base_url: str = "http://localhost:11435",
+                 model: str = "llama3:8b",
                  temperature: float = 0.3):
         self.base_url = base_url
         self.model = model
