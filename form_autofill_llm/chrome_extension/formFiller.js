@@ -1,4 +1,4 @@
-// formFiller.js - Orchestrates the form filling process
+// formFiller.js - Orchestrates the form filling process (Robust Version)
 class FormFiller {
     constructor() {
         this.fieldDetector = new FieldDetector();
@@ -76,13 +76,16 @@ class FormFiller {
     }
 
     async fillSingleField(fieldData, value) {
-        const { element, type } = fieldData;
+        const { element, type, customDropdown } = fieldData;
         
         try {
             element.scrollIntoView({ behavior: 'smooth', block: 'center' });
             await this.sleep(200);
 
             switch (type) {
+                case 'custom-select':
+                    return await this.fillCustomSelect(element, customDropdown, value);
+
                 case 'text':
                 case 'email':
                 case 'password':
@@ -124,6 +127,83 @@ class FormFiller {
             }
         } catch (error) {
             console.error(`Error filling field of type ${type}:`, error);
+            return false;
+        }
+    }
+
+    async fillCustomSelect(hiddenSelect, dropdownAnchor, value) {
+        try {
+            console.log(`Filling custom select: ${hiddenSelect.id} with value: ${value}`);
+            
+            // Click the dropdown anchor to open options
+            dropdownAnchor.focus();
+            dropdownAnchor.click();
+            await this.sleep(500);
+
+            // Find the dropdown results container
+            const dropdownResultsId = `${hiddenSelect.id}_dropdown-results`;
+            const resultsContainer = document.querySelector(`#${dropdownResultsId}`);
+            
+            if (!resultsContainer) {
+                console.warn('Dropdown results container not found');
+                return false;
+            }
+
+            // Find matching option
+            const options = resultsContainer.querySelectorAll('li[role="option"]');
+            let matchedOption = null;
+            
+            const normalizedValue = this.normalizeText(value);
+            
+            for (const option of options) {
+                const optionText = this.normalizeText(option.textContent);
+                const optionLabel = this.normalizeText(option.getAttribute('aria-label') || '');
+                const optionTitle = this.normalizeText(option.getAttribute('title') || '');
+                
+                // Skip "Make a Selection" options
+                if (optionText.includes('make a selection')) continue;
+                
+                // Try exact match first
+                if (optionText === normalizedValue || 
+                    optionLabel === normalizedValue || 
+                    optionTitle === normalizedValue) {
+                    matchedOption = option;
+                    break;
+                }
+                
+                // Try contains match
+                if (optionText.includes(normalizedValue) || 
+                    normalizedValue.includes(optionText) ||
+                    optionLabel.includes(normalizedValue) || 
+                    normalizedValue.includes(optionLabel)) {
+                    matchedOption = option;
+                    // Don't break, continue looking for exact match
+                }
+            }
+
+            if (matchedOption) {
+                console.log(`Found matching option: ${matchedOption.textContent.trim()}`);
+                matchedOption.scrollIntoView({ behavior: 'smooth', block: 'center' });
+                await this.sleep(200);
+                matchedOption.click();
+                await this.sleep(300);
+                
+                // Verify selection
+                const selectedText = dropdownAnchor.querySelector('.dropdown-text, .dropdown-placeholder');
+                if (selectedText) {
+                    const currentValue = selectedText.textContent.trim();
+                    console.log(`Selected value: ${currentValue}`);
+                }
+                
+                return true;
+            } else {
+                console.warn(`No matching option found for: ${value}`);
+                // Close dropdown
+                dropdownAnchor.click();
+                return false;
+            }
+        } catch (error) {
+            console.error('Error filling custom select:', error);
             return false;
         }
     }
@@ -172,6 +252,7 @@ class FormFiller {
         if (matchingOption) {
             element.value = matchingOption.value;
             element.dispatchEvent(new Event('change', { bubbles: true }));
+            element.dispatchEvent(new Event('input', { bubbles: true }));
             return true;
         }
 
@@ -285,15 +366,7 @@ class FormFiller {
         element.value = value;
         element.dispatchEvent(new Event('input', { bubbles: true }));
         element.dispatchEvent(new Event('change', { bubbles: true }));
-    }
-
-    async setValueByTyping(element, value) {
-        for (const char of value) {
-            element.value += char;
-            element.dispatchEvent(new Event('input', { bubbles: true }));
-            await this.sleep(50);
-        }
-        element.dispatchEvent(new Event('change', { bubbles: true }));
+        element.dispatchEvent(new Event('blur', { bubbles: true }));
     }
 
     async setValueByEvents(element, value) {
@@ -302,8 +375,10 @@ class FormFiller {
         
         const inputEvent = new Event('input', { bubbles: true });
         const changeEvent = new Event('change', { bubbles: true });
+        const blurEvent = new Event('blur', { bubbles: true });
         element.dispatchEvent(inputEvent);
         element.dispatchEvent(changeEvent);
+        element.dispatchEvent(blurEvent);
     }
 
     parseBoolean(value) {

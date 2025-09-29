@@ -20,6 +20,7 @@
         "fieldDetector.js",
         "llmApi.js",
         "formFiller.js",
+        "autoFillOrchestrator.js",
         "content.js"
       ],
       "run_at": "document_idle"

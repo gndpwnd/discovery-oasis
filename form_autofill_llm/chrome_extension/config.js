@@ -5,7 +5,9 @@ class Config {
             apiUrl: 'http://localhost:8000/fill-form',
             autoFillEnabled: true,
             debugMode: false,
-            requestTimeout: 30000
+            requestTimeout: 30000,
+            maxIterations: 5,
+            iterationDelay: 2000
         };
     }
 

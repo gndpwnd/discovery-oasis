@@ -4,6 +4,7 @@ class PopupController {
         this.currentTab = null;
         this.detectedFields = {};
         this.isDetecting = false;
+        this.autoFillInProgress = false;
     }
 
     async init() {
@@ -19,10 +20,11 @@ class PopupController {
     }
 
     setupEventListeners() {
+        // FIXED: Changed from 'autoFillBtn' to 'sendToLLMBtn'
+        document.getElementById('sendToLLMBtn').addEventListener('click', () => this.startAutoFill());
         document.getElementById('detectBtn').addEventListener('click', () => this.detectFields());
         document.getElementById('downloadBtn').addEventListener('click', () => this.downloadJSON());
-        document.getElementById('refreshBtn').addEventListener('click', () => this.refreshDetection());
-        document.getElementById('sendToLLMBtn').addEventListener('click', () => this.sendToLLMAndFill());
+        document.getElementById('refreshBtn').addEventListener('click', () => this.detectFields());
         document.getElementById('toggleSettings').addEventListener('click', () => this.toggleSettings());
         document.getElementById('saveSettingsBtn').addEventListener('click', () => this.saveSettings());
         document.getElementById('testConnectionBtn').addEventListener('click', () => this.testConnection());
@@ -31,6 +33,8 @@ class PopupController {
     async loadSettings() {
         const settings = await config.load();
         document.getElementById('apiUrl').value = settings.apiUrl;
+        document.getElementById('maxIterations').value = settings.maxIterations || 5;
+        document.getElementById('iterationDelay').value = settings.iterationDelay || 2000;
     }
 
     initializePopup() {
@@ -42,10 +46,56 @@ class PopupController {
         }
 
         statusDiv.innerHTML = `
-            <div class="field-count">Ready to detect</div>
+            <div class="field-count">Ready to detect fields</div>
             <div>Current page: ${new URL(this.currentTab.url).hostname}</div>
         `;
         statusDiv.className = 'status ready';
+    }
+
+    async startAutoFill() {
+        if (this.autoFillInProgress) {
+            this.showError('Auto-fill already in progress');
+            return;
+        }
+
+        this.autoFillInProgress = true;
+        const sendToLLMBtn = document.getElementById('sendToLLMBtn');
+        const statusDiv = document.getElementById('status');
+        
+        sendToLLMBtn.disabled = true;
+        sendToLLMBtn.innerHTML = '<div class="loading"></div>Auto-filling...';
+        
+        statusDiv.className = 'status detecting';
+        statusDiv.innerHTML = `
+            <div class="field-count">Starting intelligent auto-fill...</div>
+            <div>This may take a few moments</div>
+        `;
+
+        try {
+            const response = await this.sendMessageToTab('startAutoFill', { 
+                progressCallback: true 
+            });
+            
+            if (response && response.success) {
+                const { totalIterations, totalFieldsFilled, totalErrors } = response;
+                
+                this.showSuccess(
+                    `Auto-fill complete! ${totalFieldsFilled} fields filled across ${totalIterations} iterations. ${totalErrors} errors.`
+                );
+                
+                document.getElementById('downloadBtn').disabled = false;
+                
+                setTimeout(() => this.detectFields(), 1000);
+            } else {
+                this.showError(response?.error || 'Auto-fill failed');
+            }
+        } catch (error) {
+            this.showError('Error: ' + error.message);
+        } finally {
+            this.autoFillInProgress = false;
+            sendToLLMBtn.disabled = false;
+            sendToLLMBtn.innerHTML = 'Send to LLM & Auto-Fill';
+        }
     }
 
     async detectFields() {
@@ -71,8 +121,10 @@ class PopupController {
                 this.detectedFields = response.fields;
                 this.updateStatus(response.fieldCount, this.detectedFields);
                 this.showFieldPreview(this.detectedFields);
-                document.getElementById('downloadBtn').disabled = false;
+                
+                // FIXED: Enable the buttons after successful detection
                 document.getElementById('sendToLLMBtn').disabled = false;
+                document.getElementById('downloadBtn').disabled = false;
             } else {
                 this.showError('Failed to detect fields. Make sure the page is fully loaded.');
             }
@@ -99,43 +151,6 @@ class PopupController {
         }
     }
 
-    async sendToLLMAndFill() {
-        const sendBtn = document.getElementById('sendToLLMBtn');
-        const originalText = sendBtn.textContent;
-        
-        sendBtn.disabled = true;
-        sendBtn.innerHTML = '<div class="loading"></div>Sending to LLM...';
-        
-        try {
-            const response = await this.sendMessageToTab('sendToLLMAndFill');
-            
-            if (response && response.success) {
-                const { fillResult } = response;
-                this.showSuccess(
-                    `Form filled! ${fillResult.filled} fields completed, ${fillResult.errors} errors`
-                );
-                
-                // Refresh field preview to show filled values
-                setTimeout(() => this.detectFields(), 2000);
-            } else {
-                this.showError(response?.error || 'Failed to send to LLM');
-            }
-        } catch (error) {
-            this.showError('Error: ' + error.message);
-        } finally {
-            sendBtn.disabled = false;
-            sendBtn.textContent = originalText;
-        }
-    }
-
-    async refreshDetection() {
-        document.getElementById('downloadBtn').disabled = true;
-        document.getElementById('sendToLLMBtn').disabled = true;
-        document.getElementById('field-preview').classList.add('hidden');
-        this.detectedFields = {};
-        await this.detectFields();
-    }
-
     toggleSettings() {
         const settingsDiv = document.getElementById('settings');
         settingsDiv.classList.toggle('hidden');
@@ -143,14 +158,28 @@ class PopupController {
 
     async saveSettings() {
         const apiUrl = document.getElementById('apiUrl').value.trim();
+        const maxIterations = parseInt(document.getElementById('maxIterations').value);
+        const iterationDelay = parseInt(document.getElementById('iterationDelay').value);
         
         if (!apiUrl) {
             this.showError('API URL cannot be empty');
             return;
         }
 
+        if (maxIterations < 1 || maxIterations > 20) {
+            this.showError('Max iterations must be between 1 and 20');
+            return;
+        }
+
+        if (iterationDelay < 500 || iterationDelay > 10000) {
+            this.showError('Iteration delay must be between 500 and 10000ms');
+            return;
+        }
+
         try {
             await config.setApiUrl(apiUrl);
+            await config.set('maxIterations', maxIterations);
+            await config.set('iterationDelay', iterationDelay);
             await this.sendMessageToTab('setApiUrl', { url: apiUrl });
             this.showSuccess('Settings saved successfully!');
         } catch (error) {
@@ -207,7 +236,7 @@ class PopupController {
         statusDiv.className = 'status ready';
         statusDiv.innerHTML = `
             <div class="field-count">${fieldCount} fields detected</div>
-            <div>Ready to send to LLM or download</div>
+            <div>Ready to auto-fill or download</div>
         `;
     }
 

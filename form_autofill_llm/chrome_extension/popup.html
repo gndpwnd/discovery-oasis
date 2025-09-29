@@ -256,6 +256,14 @@
             <label for="apiUrl">API URL:</label>
             <input type="text" id="apiUrl" placeholder="http://localhost:8000/fill-form">
         </div>
+        <div class="input-group">
+            <label for="maxIterations">Max Auto-Fill Iterations:</label>
+            <input type="number" id="maxIterations" value="5" min="1" max="20">
+        </div>
+        <div class="input-group">
+            <label for="iterationDelay">Delay Between Iterations (ms):</label>
+            <input type="number" id="iterationDelay" value="2000" min="500" max="10000" step="500">
+        </div>
         <button id="saveSettingsBtn" class="button secondary" style="width: 100%;">
             Save Settings
         </button>

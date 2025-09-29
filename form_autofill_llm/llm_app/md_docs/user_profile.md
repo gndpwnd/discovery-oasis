@@ -5,8 +5,10 @@
 - **Email**: gnelsonbusi@gmail.com  
 - **Phone**: (907) 671-6579  
 - **LinkedIn**: [linkedin.com/in/gatlin-nelson](https://www.linkedin.com/in/gatlin-nelson)  
-- **Location**: Daytona Beach, FL  
-- **Summary**: Detail-oriented computer engineering student (Graduating May 2027) with a passion for innovative design and problem-solving in robotics, full-stack development operations, AI, and cybersecurity. Eager to apply academic knowledge in practical settings to contribute to cutting-edge projects and gain valuable industry experience.  
+- **Location**: Daytona Beach, Florida (FL)
+- **Address**: 150 Acklins Cir, Unit 310
+- **Zip Code**: 32119
+- **Summary**: Detail-oriented computer engineering student with a passion for innovative design and problem-solving in robotics, full-stack development operations, AI, and cybersecurity. Eager to apply academic knowledge in practical settings to contribute to cutting-edge projects and gain valuable industry experience.  
 
 ## Education
 **Bachelor of Science in Computer Engineering**  

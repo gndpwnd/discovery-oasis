@@ -3,6 +3,7 @@ class UniversalFormFiller {
     constructor() {
         this.fieldDetector = new FieldDetector();
         this.formFiller = new FormFiller();
+        this.autoFillOrchestrator = null;
         this.isInitialized = false;
     }
 
@@ -11,6 +12,13 @@ class UniversalFormFiller {
         
         await config.load();
         await llmApi.init();
+        
+        this.formFiller.fieldDetector = this.fieldDetector;
+        this.autoFillOrchestrator = new AutoFillOrchestrator(
+            this.fieldDetector,
+            this.formFiller,
+            llmApi
+        );
         
         this.isInitialized = true;
         console.log('Universal Form Filler initialized');
@@ -28,69 +36,28 @@ class UniversalFormFiller {
         return jsonUtils.downloadJSON(exportData);
     }
 
-    async sendToLLM() {
-        try {
-            const fields = this.fieldDetector.getDetectedFields();
-            
-            if (Object.keys(fields).length === 0) {
-                return {
-                    success: false,
-                    error: 'No fields detected. Please detect fields first.'
-                };
-            }
+    async startAutoFill(progressCallback) {
+        if (this.autoFillOrchestrator) {
+            this.autoFillOrchestrator.setProgressCallback(progressCallback);
+            return await this.autoFillOrchestrator.startAutoFill();
+        }
+        return {
+            success: false,
+            error: 'Auto-fill orchestrator not initialized'
+        };
+    }
 
-            const response = await llmApi.sendFormToLLM(fields);
-            
-            if (!response.success) {
-                return response;
-            }
-
-            const validation = jsonUtils.validateResponseJSON(response.data);
-            if (!validation.valid) {
-                return {
-                    success: false,
-                    error: `Invalid response: ${validation.error}`
-                };
-            }
-
-            return {
-                success: true,
-                data: response.data,
-                fieldCount: validation.fieldCount
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: error.message
-            };
+    async stopAutoFill() {
+        if (this.autoFillOrchestrator) {
+            this.autoFillOrchestrator.stop();
         }
     }
 
-    async autoFill(responseData) {
-        return await this.formFiller.autoFillFields(responseData);
-    }
-
-    async sendToLLMAndFill() {
-        try {
-            const llmResponse = await this.sendToLLM();
-            
-            if (!llmResponse.success) {
-                return llmResponse;
-            }
-
-            const fillResult = await this.autoFill(llmResponse.data);
-            
-            return {
-                success: true,
-                llmResponse: llmResponse,
-                fillResult: fillResult
-            };
-        } catch (error) {
-            return {
-                success: false,
-                error: error.message
-            };
+    getAutoFillStatus() {
+        if (this.autoFillOrchestrator) {
+            return this.autoFillOrchestrator.getStatus();
         }
+        return { isRunning: false };
     }
 
     async setApiUrl(url) {
@@ -127,17 +94,24 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
                 const downloadResult = await universalFormFiller.downloadJSON();
                 return downloadResult;
 
-            case 'sendToLLM':
-                const llmResult = await universalFormFiller.sendToLLM();
-                return llmResult;
+            case 'startAutoFill':
+                const autoFillResult = await universalFormFiller.startAutoFill(
+                    message.progressCallback ? (progress) => {
+                        chrome.runtime.sendMessage({
+                            action: 'autoFillProgress',
+                            progress: progress
+                        });
+                    } : null
+                );
+                return autoFillResult;
 
-            case 'autoFillFields':
-                const fillResult = await universalFormFiller.autoFill(message.data);
-                return fillResult;
+            case 'stopAutoFill':
+                await universalFormFiller.stopAutoFill();
+                return { success: true, message: 'Auto-fill stopped' };
 
-            case 'sendToLLMAndFill':
-                const combinedResult = await universalFormFiller.sendToLLMAndFill();
-                return combinedResult;
+            case 'getAutoFillStatus':
+                const status = universalFormFiller.getAutoFillStatus();
+                return { success: true, status: status };
 
             case 'setApiUrl':
                 await universalFormFiller.setApiUrl(message.url);
@@ -168,14 +142,52 @@ if (document.readyState === 'loading') {
     document.addEventListener('DOMContentLoaded', () => {
         setTimeout(async () => {
             await universalFormFiller.init();
-            universalFormFiller.detectFields();
-        }, 1000);
+            console.log('Page loaded, detecting fields...');
+            const fields = universalFormFiller.detectFields();
+            console.log('Initial detection complete:', fields);
+        }, 2000);
     });
 } else {
     setTimeout(async () => {
         await universalFormFiller.init();
-        universalFormFiller.detectFields();
-    }, 1000);
+        console.log('Page already loaded, detecting fields...');
+        const fields = universalFormFiller.detectFields();
+        console.log('Initial detection complete:', fields);
+    }, 2000);
 }
+
+// Add mutation observer to detect dynamic forms
+const observePageChanges = () => {
+    const observer = new MutationObserver((mutations) => {
+        const hasFormChanges = mutations.some(mutation => {
+            return Array.from(mutation.addedNodes).some(node => {
+                if (node.nodeType === 1) {
+                    return node.matches('form, input, select, textarea, [role="combobox"]') ||
+                           node.querySelector('form, input, select, textarea, [role="combobox"]');
+                }
+                return false;
+            });
+        });
+        
+        if (hasFormChanges) {
+            console.log('Form changes detected, re-running detection...');
+            setTimeout(() => {
+                universalFormFiller.detectFields();
+            }, 1000);
+        }
+    });
+    
+    observer.observe(document.body, {
+        childList: true,
+        subtree: true
+    });
+    
+    console.log('Mutation observer started for dynamic form detection');
+};
+
+// Start observing after initialization
+setTimeout(() => {
+    observePageChanges();
+}, 3000);
 
 console.log('Universal Form Filler content script loaded');
