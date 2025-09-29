@@ -1,0 +1,37 @@
+{
+  "manifest_version": 3,
+  "name": "Universal Form Filler with AI",
+  "version": "2.0.0",
+  "description": "AI-powered universal form filler using local LLM",
+  "permissions": [
+    "activeTab",
+    "storage",
+    "downloads"
+  ],
+  "host_permissions": [
+    "http://localhost:8000/*"
+  ],
+  "content_scripts": [
+    {
+      "matches": ["<all_urls>"],
+      "js": [
+        "config.js",
+        "jsonUtils.js",
+        "fieldDetector.js",
+        "llmApi.js",
+        "formFiller.js",
+        "content.js"
+      ],
+      "run_at": "document_idle"
+    }
+  ],
+  "action": {
+    "default_popup": "popup.html",
+    "default_title": "Universal Form Filler"
+  },
+  "icons": {
+    "16": "icon16.png",
+    "48": "icon48.png",
+    "128": "icon128.png"
+  }
+}
