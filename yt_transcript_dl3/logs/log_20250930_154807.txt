@@ -1,2 +1,0 @@
-[2025-09-30 15:48:07] Saved/updated playlist markdown: links_md/PLAEkZMSwguhBqbzLFVWCWzXMdPf_F-y3J_Land Navigation.md
-[2025-09-30 15:48:07] Error fetching transcript for Land Navigation: How to plot a point and shoot an azimuth (rZTJIQiWAuE): type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'

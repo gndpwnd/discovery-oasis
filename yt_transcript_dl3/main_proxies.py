@@ -5,17 +5,19 @@ import datetime
 from pathlib import Path
 import os
 import sys
-from youtube_transcript_api import YouTubeTranscriptApi, TranscriptsDisabled, NoTranscriptFound, CouldNotRetrieveTranscript
+import json
+from youtube_transcript_api import (
+    YouTubeTranscriptApi,
+    TranscriptsDisabled,
+    NoTranscriptFound,
+    CouldNotRetrieveTranscript,
+)
+from youtube_transcript_api.proxies import WebshareProxyConfig
 from yt_dlp import YoutubeDL
 
 """
 cron job
-0 */2 * * * /usr/bin/python3 ${HOME}/yt_dlo/yt_transcript_manager.py \
-${HOME}/yt_dlo/links \
-${HOME}/yt_dlo/yt_transcripts \
-${HOME}/yt_dlo/playlist_archives \
-${HOME}/yt_dlo/logs
-
+0 */2 * * * /usr/bin/python3 ${HOME}/yt_dlo/main_proxies.py
 """
 
 # --- CONFIG ---
@@ -28,9 +30,10 @@ LINKS_FILE = BASE_DIR / "links" / "links.txt"
 TRANSCRIPTS_DIR = BASE_DIR / "yt_transcripts"
 PLAYLIST_ARCHIVES_DIR = BASE_DIR / "playlist_archives"
 LOGS_DIR = BASE_DIR / "logs"
+CONFIG_FILE = BASE_DIR / "config" / "proxies.json"
 
 # Ensure directories exist
-for d in [BASE_DIR, TRANSCRIPTS_DIR, PLAYLIST_ARCHIVES_DIR, LOGS_DIR, LINKS_FILE.parent]:
+for d in [BASE_DIR, TRANSCRIPTS_DIR, PLAYLIST_ARCHIVES_DIR, LOGS_DIR, LINKS_FILE.parent, CONFIG_FILE.parent]:
     d.mkdir(parents=True, exist_ok=True)
 
 # Timestamped log file
@@ -44,6 +47,30 @@ def log(message):
     with open(LOG_FILE, "a", encoding="utf-8") as f:
         f.write(log_msg + "\n")
 
+# --- Load Webshare Config ---
+if not CONFIG_FILE.exists():
+    log(f"❌ Proxy config file not found: {CONFIG_FILE}")
+    sys.exit(1)
+
+with open(CONFIG_FILE, "r") as f:
+    cfg = json.load(f)
+
+USERNAME = cfg.get("username")
+PASSWORD = cfg.get("password")
+
+if not USERNAME or not PASSWORD:
+    log("❌ Proxy config missing username/password")
+    sys.exit(1)
+
+# Initialize API with Webshare rotating residential proxies
+ytt_api = YouTubeTranscriptApi(
+    proxy_config=WebshareProxyConfig(
+        proxy_username=USERNAME,
+        proxy_password=PASSWORD,
+        filter_ip_locations=["us"]  # optional, restrict pool to US IPs
+    )
+)
+
 # --- HELPERS ---
 def get_video_id(url: str):
     if "watch?v=" in url:
@@ -52,23 +79,60 @@ def get_video_id(url: str):
         return url.split("youtu.be/")[1].split("?")[0]
     return None
 
+MAX_RETRIES_PER_PROXY = 3  # Retry same proxy 3 times
+
 def fetch_transcript(video_id):
-    try:
-        api = YouTubeTranscriptApi()
-        return api.fetch(video_id)
-    except TranscriptsDisabled:
-        log(f"Transcripts disabled for {video_id}")
-    except NoTranscriptFound:
-        log(f"No transcript found for {video_id}")
-    except CouldNotRetrieveTranscript as e:
-        msg = str(e).lower()
-        log(f"Error fetching transcript for {video_id}: {e}")
-        if "ip" in msg or "blocked" in msg:
-            log("YouTube is blocking requests from this IP. Exiting program.")
+    """
+    Tries fetching a transcript by rotating through all available Webshare proxies.
+    Each proxy is tried MAX_RETRIES_PER_PROXY times.
+    Exits program if all proxies are exhausted.
+    """
+    proxy_attempt = 0
+
+    while True:
+        proxy_attempt += 1
+        try:
+            # Initialize a new API object (forces Webshare to rotate to a new IP)
+            ytt_api = YouTubeTranscriptApi(
+                proxy_config=WebshareProxyConfig(
+                    proxy_username=USERNAME,
+                    proxy_password=PASSWORD
+                )
+            )
+
+            for attempt in range(1, MAX_RETRIES_PER_PROXY + 1):
+                try:
+                    return ytt_api.fetch(video_id)
+                except (CouldNotRetrieveTranscript, Exception) as e:
+                    msg = str(e).lower()
+                    if "ip" in msg or "blocked" in msg or "429" in msg:
+                        log(f"[Proxy attempt {proxy_attempt}] IP blocked / 429 for {video_id} (retry {attempt}/{MAX_RETRIES_PER_PROXY})")
+                        time.sleep(DELAY_SECONDS)
+                        continue
+                    elif isinstance(e, TranscriptsDisabled):
+                        log(f"Transcripts disabled for {video_id}")
+                        return None
+                    elif isinstance(e, NoTranscriptFound):
+                        log(f"No transcript found for {video_id}")
+                        return None
+                    else:
+                        log(f"Unexpected error for {video_id}: {e} (retry {attempt}/{MAX_RETRIES_PER_PROXY})")
+                        time.sleep(DELAY_SECONDS)
+                        continue
+
+            log(f"[Proxy attempt {proxy_attempt}] All retries for this proxy exhausted, rotating proxy...")
+            time.sleep(2)  # short delay before next proxy
+
+        except Exception as e:
+            log(f"Error initializing proxy (attempt {proxy_attempt}): {e}")
+            time.sleep(2)
+            continue
+
+        # Stop if too many proxies have been tried
+        if proxy_attempt > 50:  # adjust depending on your proxy pool size
+            log(f"All proxies exhausted, exiting program.")
             sys.exit(1)
-    except Exception as e:
-        log(f"Unexpected error fetching transcript for {video_id}: {e}")
-    return None
+
 
 def save_transcript_md(video_title, video_id, transcript):
     safe_title = "".join(c if c.isalnum() or c in "-_ " else "_" for c in video_title)
@@ -85,8 +149,10 @@ def fetch_playlist_videos(playlist_url):
     with YoutubeDL(ydl_opts) as ydl:
         info = ydl.extract_info(playlist_url, download=False)
         if info.get("_type") == "playlist":
-            videos = [{"id": e["id"], "title": e["title"], "url": f"https://www.youtube.com/watch?v={e['id']}"}
-                      for e in info["entries"] if e]
+            videos = [
+                {"id": e["id"], "title": e["title"], "url": f"https://www.youtube.com/watch?v={e['id']}"}
+                for e in info["entries"] if e
+            ]
             return info["id"], info.get("title", "Playlist"), videos
     return None, None, []
 
@@ -103,7 +169,6 @@ def fetch_video_title(video_url_or_id):
         return None
 
 def save_playlist_markdown(playlist_id, playlist_title, videos):
-    """Save playlist info and transcript links to a Markdown file"""
     safe_title = "".join(c if c.isalnum() or c in "-_ " else "_" for c in playlist_title)
     md_file = PLAYLIST_ARCHIVES_DIR / f"{playlist_id}_{safe_title}.md"
     with open(md_file, "w", encoding="utf-8") as f:
@@ -115,7 +180,6 @@ def save_playlist_markdown(playlist_id, playlist_title, videos):
         for idx, video in enumerate(videos, 1):
             f.write(f"{idx}. [{video['title']}]({video['url']})\n")
     log(f"Saved playlist Markdown -> {md_file}")
-
 
 def process_links_file(file_path):
     log(f"Processing file: {file_path}")
@@ -130,10 +194,8 @@ def process_links_file(file_path):
                 log(f"No videos found in playlist {url}")
                 continue
 
-            # ✅ Save the playlist file FIRST
             save_playlist_markdown(playlist_id, playlist_title, videos)
 
-            # Then loop through videos and fetch transcripts
             for video in videos:
                 vid_id = video["id"]
                 existing = list(TRANSCRIPTS_DIR.glob(f"{vid_id}*"))
@@ -148,7 +210,6 @@ def process_links_file(file_path):
                 time.sleep(DELAY_SECONDS)
 
         else:
-            # Single video
             vid_id = get_video_id(url)
             if not vid_id:
                 log(f"Skipping URL (cannot extract video ID): {url}")
@@ -164,7 +225,6 @@ def process_links_file(file_path):
                 save_transcript_md(title, vid_id, transcript)
             log(f"Waiting {DELAY_SECONDS} seconds to avoid rate limiting...")
             time.sleep(DELAY_SECONDS)
-
 
 def main():
     process_links_file(LINKS_FILE)
