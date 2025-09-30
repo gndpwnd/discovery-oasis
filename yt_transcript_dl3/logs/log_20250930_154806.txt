@@ -1,0 +1,3 @@
+[2025-09-30 15:48:06] Saved/updated playlist markdown: links_md/PLAEkZMSwguhDAt3R6-YGb-gewMiaWNuyF_Ruck Talk.md
+[2025-09-30 15:48:06] Error fetching transcript for Should you go 18x? (Special Forces Candidate MOS) (q6HLcQretE8): type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'
+[2025-09-30 15:48:06] Error fetching transcript for What happens if you fail Special Forces selection? (5IHZrbe-xCo): type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'

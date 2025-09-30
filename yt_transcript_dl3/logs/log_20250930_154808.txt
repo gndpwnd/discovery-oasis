@@ -1,0 +1,1 @@
+[2025-09-30 15:48:08] Error fetching transcript for 6 Exercises That Actually Build Selection Strength (EeZDnOoJv4k): type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'

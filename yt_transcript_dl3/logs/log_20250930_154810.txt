@@ -1,0 +1,1 @@
+[2025-09-30 15:48:10] Error fetching transcript for How I'd train for Special Forces if I had to do it again (-68WUYe8mQs): type object 'YouTubeTranscriptApi' has no attribute 'get_transcript'

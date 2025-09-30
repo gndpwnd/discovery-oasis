@@ -2,3 +2,5 @@
 **/venv/
 **/__pycache__/
 **/yt_transcripts/
+**.env
+**client_secret.json

@@ -1,3 +1,4 @@
+
 """
 Configuration settings for YouTube Transcript Downloader
 """
@@ -11,8 +12,13 @@ LOG_DIR = Path("./logs")
 PROGRESS_FILE = TRANSCRIPT_DIR / ".progress.json"
 
 # Request Configuration
-DELAY_BETWEEN_REQUESTS = 5  # seconds
+DELAY_BETWEEN_REQUESTS = 2  # Reduced since we're using concurrent requests
 PROXY_TIMEOUT = 15  # seconds
+DEAD_PROXY_RETRY_MINUTES = 10  # How long to wait before retrying a dead proxy
+
+# Concurrent Processing
+DEFAULT_WORKERS = 5  # Default number of concurrent workers
+MAX_WORKERS = 20     # Maximum allowed workers
 
 # Proxy List
 PROXIES = [
@@ -290,3 +296,16 @@ PROXIES = [
     ["185.89.42.95", 8085],
     ["45.3.48.234", 3129],
 ]
+
+"""PROXIES = [
+    ["107.174.123.200", 80],
+    ["23.247.136.254", 80],
+    ["4.245.123.244", 80],
+    ["109.135.16.145", 8789],
+    ["158.255.77.168", 80],
+    ["123.30.154.171", 7777],
+    ["188.40.57.101", 80],
+    ["154.118.231.30", 80],
+    ["154.65.39.8", 80],
+    ["143.198.147.156", 8888],
+]"""
