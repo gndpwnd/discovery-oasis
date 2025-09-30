@@ -8,11 +8,19 @@ Features:
 - Auto-retry on errors with exponential backoff
 - Skip already downloaded transcripts
 - Continuous running until all videos are processed
+- Configurable paths via command-line arguments
+
+Usage:
+    python main.py --links-file ~/yt_dlo/links.txt \
+                   --output-dir ~/yt_dlo/transcripts \
+                   --log-dir ~/logs/yt_dlo \
+                   --delay 10
 
 
-nohup python main.py --delay 10 &
 
-ps aux | grep main.py
+# Run every 30 minutes
+*/30 * * * * /usr/bin/python3 ${HOME}/yt_dlo/main.py --links-file ${HOME}/yt_dlo/links.txt --output-dir ${HOME}/yt_dlo/transcripts --log-dir ${HOME}/logs/yt_dlo --delay 10 --retry-delay 1800
+
 """
 
 import yt_dlp
@@ -26,11 +34,22 @@ import logging
 import sys
 
 
-def setup_logging(log_file='./transcripts/download.log'):
-    """Setup logging to both file and console"""
+def setup_logging(log_dir, script_start_time):
+    """Setup logging to both file and console with timestamped log file"""
+    # Create log directory if it doesn't exist
+    log_dir = Path(log_dir)
+    log_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Create timestamped log file
+    timestamp = script_start_time.strftime('%Y%m%d_%H%M%S')
+    log_file = log_dir / f'download_{timestamp}.log'
+    
     # Create logger
     logger = logging.getLogger('transcript_downloader')
     logger.setLevel(logging.INFO)
+    
+    # Remove any existing handlers
+    logger.handlers = []
     
     # Create formatters
     detailed_formatter = logging.Formatter(
@@ -51,6 +70,8 @@ def setup_logging(log_file='./transcripts/download.log'):
     # Add handlers
     logger.addHandler(file_handler)
     logger.addHandler(console_handler)
+    
+    logger.info(f"Log file: {log_file}")
     
     return logger
 
@@ -270,9 +291,10 @@ def process_single_video(url, output_dir, delay=10, logger=None):
     # Get transcript
     transcript, error = get_transcript_with_ytdlp(url, video_id, logger)
     
-    # Check for rate limiting
+    # Check for rate limiting - EXIT IMMEDIATELY
     if error == "RATE_LIMITED":
-        logger.warning(f"⚠  Rate limited! Will retry after waiting...")
+        logger.error(f"🚫 Rate limited detected! Exiting to prevent further issues.")
+        logger.error(f"   The cron job will retry in 30 minutes.")
         return "RATE_LIMITED"
     
     # Save to file
@@ -344,9 +366,10 @@ def process_playlist(url, output_dir, delay=10, progress_file=None, logger=None)
         # Get transcript
         transcript, error = get_transcript_with_ytdlp(video['url'], video['id'], logger)
         
-        # Check for rate limiting
+        # Check for rate limiting - EXIT IMMEDIATELY
         if error == "RATE_LIMITED":
-            logger.warning(f"\n⚠  Rate limited at video {i + 1}!")
+            logger.error(f"\n🚫 Rate limited at video {i + 1}! Exiting to prevent further issues.")
+            logger.error(f"   Progress has been saved. The cron job will retry in 30 minutes.")
             if progress_file:
                 save_progress(progress_file, progress)
             return "RATE_LIMITED"
@@ -386,89 +409,112 @@ def process_playlist(url, output_dir, delay=10, progress_file=None, logger=None)
 
 
 def main():
-    """Main function to process links.txt"""
+    """Main function to process YouTube links"""
     # Parse command line arguments
-    parser = argparse.ArgumentParser(description='Download YouTube transcripts using yt-dlp')
-    parser.add_argument('--delay', type=int, default=10, help='Delay between requests in seconds (default: 10)')
-    parser.add_argument('--retry-delay', type=int, default=1800, help='Delay after rate limit in seconds (default: 1800 = 30 min)')
+    parser = argparse.ArgumentParser(
+        description='Download YouTube transcripts using yt-dlp',
+        formatter_class=argparse.RawDescriptionHelpFormatter,
+        epilog="""
+Examples:
+  python main.py --links-file ~/yt_dlo/links.txt \\
+                 --output-dir ~/yt_dlo/transcripts \\
+                 --log-dir ~/logs/yt_dlo
+
+  python main.py --links-file ./links.txt \\
+                 --output-dir ./transcripts \\
+                 --log-dir ./logs \\
+                 --delay 5 \\
+                 --retry-delay 1800
+        """
+    )
+    parser.add_argument('--links-file', type=str, required=True,
+                        help='Path to file containing YouTube URLs (one per line)')
+    parser.add_argument('--output-dir', type=str, required=True,
+                        help='Directory to save transcripts')
+    parser.add_argument('--log-dir', type=str, required=True,
+                        help='Directory to save log files')
+    parser.add_argument('--delay', type=int, default=10,
+                        help='Delay between requests in seconds (default: 10)')
+    parser.add_argument('--retry-delay', type=int, default=1800,
+                        help='Delay after rate limit in seconds (default: 1800 = 30 min)')
     args = parser.parse_args()
     
-    # Use fixed output directory
-    output_dir = Path('./transcripts')
-    output_dir.mkdir(exist_ok=True)
+    # Record script start time
+    script_start_time = datetime.now()
     
-    # Setup logging
-    logger = setup_logging(output_dir / 'download.log')
+    # Convert paths to Path objects and expand user home directory
+    links_file = Path(args.links_file).expanduser()
+    output_dir = Path(args.output_dir).expanduser()
+    log_dir = Path(args.log_dir).expanduser()
+    
+    # Create output directory if it doesn't exist
+    output_dir.mkdir(parents=True, exist_ok=True)
+    
+    # Setup logging with timestamped log file
+    logger = setup_logging(log_dir, script_start_time)
     logger.info("="*80)
     logger.info("Starting YouTube Transcript Downloader")
-    logger.info(f"Start time: {datetime.now()}")
+    logger.info(f"Start time: {script_start_time}")
     logger.info("="*80)
     
-    links_file = Path('./links.txt')
-    
+    # Check if links file exists
     if not links_file.exists():
-        logger.error("Error: ./links.txt not found!")
+        logger.error(f"Error: Links file not found: {links_file}")
         return
     
+    logger.info(f"Links file: {links_file}")
     logger.info(f"Output directory: {output_dir}")
     
     # Progress file
     progress_file = output_dir / '.progress.json'
     
+    # Read links from file
     with open(links_file, 'r', encoding='utf-8') as f:
         links = [line.strip() for line in f if line.strip()]
     
     if not links:
-        logger.error("No links found in links.txt")
+        logger.error("No links found in links file")
         return
     
     logger.info(f"Found {len(links)} link(s) to process")
     logger.info(f"Delay between requests: {args.delay} seconds")
-    logger.info(f"Retry delay after rate limit: {args.retry_delay} seconds ({args.retry_delay // 60} minutes)")
-    logger.info("🔄 Script will run continuously until all videos are processed")
+    logger.info(f"Note: retry-delay setting ({args.retry_delay}s) is ignored - script exits on rate limit")
     logger.info("")
     
-    # Keep trying until all links are processed
-    loop_count = 0
-    while True:
-        loop_count += 1
-        logger.info(f"Starting processing loop #{loop_count}")
-        all_completed = True
+    # Process all links once - NO RETRY LOOP
+    for i, link in enumerate(links, 1):
+        logger.info(f"[{i}/{len(links)}] Processing: {link}")
         
-        for i, link in enumerate(links, 1):
-            logger.info(f"[{i}/{len(links)}] Processing: {link}")
+        try:
+            if is_playlist(link):
+                result = process_playlist(link, output_dir, delay=args.delay, 
+                                         progress_file=progress_file, logger=logger)
+            else:
+                result = process_single_video(link, output_dir, delay=args.delay, logger=logger)
             
-            try:
-                if is_playlist(link):
-                    result = process_playlist(link, output_dir, delay=args.delay, progress_file=progress_file, logger=logger)
-                else:
-                    result = process_single_video(link, output_dir, delay=args.delay, logger=logger)
+            # Exit immediately on rate limit
+            if result == "RATE_LIMITED":
+                logger.error("="*80)
+                logger.error("🚫 RATE LIMITED - EXITING")
+                logger.error(f"Processed {i} out of {len(links)} links before rate limit")
+                logger.error("The cron job will automatically retry in 30 minutes")
+                logger.error("="*80)
+                sys.exit(1)  # Exit with error code
                 
-                if result == "RATE_LIMITED":
-                    all_completed = False
-                    logger.warning(f"⏸  Pausing for {args.retry_delay // 60} minutes due to rate limiting...")
-                    logger.info(f"   Will resume automatically at {datetime.now() + timedelta(seconds=args.retry_delay)}")
-                    time.sleep(args.retry_delay)
-                    logger.info("🔄 Resuming after rate limit pause...")
-                    break  # Break inner loop to restart from beginning
-                    
-            except KeyboardInterrupt:
-                logger.info("⏹  Interrupted by user. Progress has been saved.")
-                logger.info("   Run the script again to resume from where you left off.")
-                return
-            except Exception as e:
-                logger.error(f"✗  Error processing {link}: {str(e)}", exc_info=True)
-                logger.info(f"   Continuing to next link...")
-        
-        if all_completed:
-            logger.info("="*80)
-            logger.info(f"✅ All done! All transcripts saved to: {output_dir}")
-            logger.info(f"End time: {datetime.now()}")
-            logger.info("="*80)
-            break
-        else:
-            logger.info("🔄 Restarting from beginning to process remaining videos...")
-            time.sleep(5)
+        except KeyboardInterrupt:
+            logger.info("⏹  Interrupted by user. Progress has been saved.")
+            logger.info("   Run the script again to resume from where you left off.")
+            sys.exit(0)
+        except Exception as e:
+            logger.error(f"✗  Error processing {link}: {str(e)}", exc_info=True)
+            logger.info(f"   Continuing to next link...")
+    
+    # All completed successfully
+    logger.info("="*80)
+    logger.info(f"✅ All done! All transcripts saved to: {output_dir}")
+    logger.info(f"End time: {datetime.now()}")
+    logger.info(f"Duration: {datetime.now() - script_start_time}")
+    logger.info("="*80)
 
 
 if __name__ == "__main__":
