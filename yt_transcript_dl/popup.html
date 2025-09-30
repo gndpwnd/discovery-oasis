@@ -31,12 +31,27 @@
       border-radius: 4px;
       cursor: pointer;
     }
+    input[type="text"],
     input[type="number"] {
       width: 100%;
       padding: 8px;
       border: 1px solid #ddd;
       border-radius: 4px;
       box-sizing: border-box;
+    }
+    .input-with-button {
+      display: flex;
+      gap: 8px;
+      align-items: flex-start;
+    }
+    .input-with-button input {
+      flex: 1;
+    }
+    .input-with-button button {
+      padding: 8px 16px;
+      margin: 0;
+      width: auto;
+      font-size: 12px;
     }
     button {
       width: 100%;
@@ -49,6 +64,7 @@
       font-size: 14px;
       font-weight: 600;
       transition: transform 0.2s;
+      margin-bottom: 10px;
     }
     button:hover {
       transform: translateY(-2px);
@@ -57,6 +73,15 @@
       background: #ccc;
       cursor: not-allowed;
       transform: none;
+    }
+    button.stop-btn {
+      background: linear-gradient(135deg, #f56565 0%, #c53030 100%);
+    }
+    button.stop-btn:hover {
+      transform: translateY(-2px);
+    }
+    button.test-btn {
+      background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     }
     #status {
       margin-top: 15px;
@@ -88,6 +113,20 @@
       font-size: 12px;
       color: #777;
       margin-top: 5px;
+    }
+    .connection-status {
+      display: inline-block;
+      width: 8px;
+      height: 8px;
+      border-radius: 50%;
+      background: #ccc;
+      margin-right: 6px;
+    }
+    .connection-status.connected {
+      background: #4caf50;
+    }
+    .connection-status.disconnected {
+      background: #f44336;
     }
     .progress-container {
       margin-top: 15px;
@@ -142,10 +181,28 @@
       border-radius: 4px;
       word-break: break-word;
     }
+    #stopBtn {
+      display: none;
+    }
+    #stopBtn.active {
+      display: block;
+    }
   </style>
 </head>
 <body>
   <h1>🎥 YouTube Transcript Downloader</h1>
+  
+  <div class="section">
+    <label for="apiEndpoint">
+      <span class="connection-status" id="connectionStatus"></span>
+      API Endpoint:
+    </label>
+    <div class="input-with-button">
+      <input type="text" id="apiEndpoint" value="http://localhost:8000" placeholder="http://localhost:8000">
+      <button class="test-btn" id="testBtn">Test</button>
+    </div>
+    <div class="help-text">Default: http://localhost:8000</div>
+  </div>
   
   <div class="section">
     <label for="linkFile">Upload Links File:</label>
@@ -160,6 +217,7 @@
   </div>
   
   <button id="startBtn">Start Processing</button>
+  <button id="stopBtn" class="stop-btn">Stop Processing</button>
   
   <div class="progress-container" id="progressContainer">
     <div class="progress-section">

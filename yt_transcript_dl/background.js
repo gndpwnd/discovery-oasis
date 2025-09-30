@@ -4,8 +4,40 @@ let processingState = {
   currentIndex: 0,
   delay: 3000,
   results: [],
-  currentPlaylist: null
+  currentPlaylist: null,
+  apiEndpoint: 'http://localhost:8000'
 };
+
+// Persist state to storage
+async function saveState() {
+  await chrome.storage.local.set({ processingState });
+}
+
+// Restore state from storage
+async function restoreState() {
+  const data = await chrome.storage.local.get('processingState');
+  if (data.processingState) {
+    processingState = data.processingState;
+    if (processingState.isProcessing) {
+      console.log('Resuming interrupted processing...');
+      processNextLink();
+    }
+  }
+}
+
+chrome.runtime.onStartup.addListener(() => {
+  restoreState();
+});
+
+chrome.runtime.onInstalled.addListener(() => {
+  restoreState();
+});
+
+restoreState();
+
+function sendMessageSafe(message) {
+  chrome.runtime.sendMessage(message).catch(() => {});
+}
 
 chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'startProcessing') {
@@ -14,45 +46,66 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
     processingState.currentIndex = 0;
     processingState.delay = message.delay;
     processingState.results = [];
+    processingState.apiEndpoint = message.apiEndpoint || 'http://localhost:8000';
     
+    saveState();
     processNextLink();
     sendResponse({ success: true });
   }
   
   if (message.action === 'checkStatus') {
-    sendResponse({ processing: processingState.isProcessing });
+    sendResponse({ 
+      processing: processingState.isProcessing,
+      current: processingState.currentIndex,
+      total: processingState.links.length,
+      apiEndpoint: processingState.apiEndpoint
+    });
+  }
+  
+  if (message.action === 'testConnection') {
+    testApiConnection(message.endpoint).then(result => {
+      sendResponse(result);
+    });
+    return true;
+  }
+  
+  if (message.action === 'stopProcessing') {
+    processingState.isProcessing = false;
+    saveState();
+    sendMessageSafe({
+      action: 'processingStop',
+      completed: processingState.currentIndex
+    });
+    sendResponse({ success: true });
   }
   
   if (message.action === 'transcriptExtracted') {
-    // Save the result
+    console.log('Transcript extracted for:', message.data.title);
+    
     processingState.results.push(message.data);
+    sendToApi(message.data);
     
-    // Download JSON file
-    downloadJSON(message.data);
-    
-    // Update playlist progress if in a playlist
     if (processingState.currentPlaylist) {
       processingState.currentPlaylist.currentIndex++;
       
-      chrome.runtime.sendMessage({
+      sendMessageSafe({
         action: 'playlistProgress',
         current: processingState.currentPlaylist.currentIndex,
         total: processingState.currentPlaylist.total,
         videoTitle: message.data.title
       });
       
-      // Check if playlist is complete
       if (processingState.currentPlaylist.currentIndex >= processingState.currentPlaylist.total) {
         processingState.currentPlaylist = null;
-        chrome.runtime.sendMessage({
+        sendMessageSafe({
           action: 'playlistComplete'
         });
       }
     }
     
-    // Process next link after delay
     setTimeout(() => {
       processingState.currentIndex++;
+      saveState();
       processNextLink();
     }, processingState.delay);
     
@@ -60,20 +113,22 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   }
   
   if (message.action === 'playlistVideos') {
-    // Set up playlist tracking
+    console.log('Playlist videos received:', message.videos.length);
+    
     processingState.currentPlaylist = {
       videos: message.videos,
       currentIndex: 0,
       total: message.videos.length
     };
     
-    // Add playlist videos to the queue
     const newLinks = message.videos.map(v => v.url);
     processingState.links.splice(processingState.currentIndex + 1, 0, ...newLinks);
     
-    // Move to next link (first video in playlist)
+    saveState();
+    
     setTimeout(() => {
       processingState.currentIndex++;
+      saveState();
       processNextLink();
     }, processingState.delay);
     
@@ -83,43 +138,56 @@ chrome.runtime.onMessage.addListener((message, sender, sendResponse) => {
   if (message.action === 'extractionError') {
     console.error('Extraction error:', message.error);
     
-    // Update playlist progress if in a playlist (mark as error but continue)
+    const errorData = {
+      videoId: 'error',
+      title: 'Error',
+      error: message.error,
+      url: processingState.links[processingState.currentIndex] || 'unknown',
+      extractedAt: new Date().toISOString()
+    };
+    processingState.results.push(errorData);
+    
     if (processingState.currentPlaylist) {
       processingState.currentPlaylist.currentIndex++;
       
-      chrome.runtime.sendMessage({
+      sendMessageSafe({
         action: 'playlistProgress',
         current: processingState.currentPlaylist.currentIndex,
         total: processingState.currentPlaylist.total,
         videoTitle: 'Error: ' + message.error
       });
       
-      // Check if playlist is complete
       if (processingState.currentPlaylist.currentIndex >= processingState.currentPlaylist.total) {
         processingState.currentPlaylist = null;
-        chrome.runtime.sendMessage({
+        sendMessageSafe({
           action: 'playlistComplete'
         });
       }
     }
     
-    // Continue to next link
     setTimeout(() => {
       processingState.currentIndex++;
+      saveState();
       processNextLink();
     }, processingState.delay);
     
     sendResponse({ success: true });
   }
   
-  return true; // Keep channel open for async response
+  return true;
 });
 
 async function processNextLink() {
+  if (!processingState.isProcessing) {
+    console.log('Processing stopped by user');
+    return;
+  }
+  
   if (processingState.currentIndex >= processingState.links.length) {
-    // All done
     processingState.isProcessing = false;
-    chrome.runtime.sendMessage({
+    await saveState();
+    console.log('Processing complete! Total processed:', processingState.results.length);
+    sendMessageSafe({
       action: 'complete',
       total: processingState.results.length
     });
@@ -129,8 +197,9 @@ async function processNextLink() {
   const currentLink = processingState.links[processingState.currentIndex];
   const isPlaylist = currentLink.includes('list=');
   
-  // Send progress update
-  chrome.runtime.sendMessage({
+  console.log(`Processing ${processingState.currentIndex + 1}/${processingState.links.length}: ${currentLink}`);
+  
+  sendMessageSafe({
     action: 'progress',
     current: processingState.currentIndex + 1,
     total: processingState.links.length,
@@ -138,39 +207,87 @@ async function processNextLink() {
   });
   
   try {
-    // Create or update tab
-    const tabs = await chrome.tabs.query({ url: 'https://www.youtube.com/*' });
-    
-    if (tabs.length > 0) {
-      await chrome.tabs.update(tabs[0].id, { url: currentLink, active: true });
+    if (isPlaylist) {
+      // For playlists, go to YouTube to extract video URLs
+      const tabs = await chrome.tabs.query({ url: 'https://www.youtube.com/*' });
+      if (tabs.length > 0) {
+        await chrome.tabs.update(tabs[0].id, { url: currentLink, active: false });
+      } else {
+        await chrome.tabs.create({ url: currentLink, active: false });
+      }
     } else {
-      await chrome.tabs.create({ url: currentLink, active: true });
+      // For single videos, go to youtube-transcript.io
+      const transcriptUrl = `https://www.youtube-transcript.io/?url=${encodeURIComponent(currentLink)}`;
+      const tabs = await chrome.tabs.query({ url: 'https://www.youtube-transcript.io/*' });
+      
+      if (tabs.length > 0) {
+        await chrome.tabs.update(tabs[0].id, { url: transcriptUrl, active: false });
+      } else {
+        await chrome.tabs.create({ url: transcriptUrl, active: false });
+      }
     }
   } catch (error) {
     console.error('Error navigating to link:', error);
-    chrome.runtime.sendMessage({
+    sendMessageSafe({
       action: 'error',
       error: error.message
     });
     processingState.isProcessing = false;
+    await saveState();
   }
 }
 
-function downloadJSON(data) {
-  const filename = `${sanitizeFilename(data.title)}_${data.videoId}.json`;
-  const jsonString = JSON.stringify(data, null, 2);
-  const blob = new Blob([jsonString], { type: 'application/json' });
-  const url = URL.createObjectURL(blob);
+async function sendToApi(data) {
+  const endpoint = `${processingState.apiEndpoint}/transcript`;
   
-  chrome.downloads.download({
-    url: url,
-    filename: `youtube_transcripts/${filename}`,
-    saveAs: false
-  }, () => {
-    URL.revokeObjectURL(url);
-  });
+  console.log('Sending to API:', endpoint);
+  
+  try {
+    const response = await fetch(endpoint, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify(data)
+    });
+    
+    if (!response.ok) {
+      throw new Error(`API error: ${response.status} ${response.statusText}`);
+    }
+    
+    const result = await response.json();
+    console.log('API response:', result);
+    
+    sendMessageSafe({
+      action: 'apiSuccess',
+      filename: result.filename,
+      videoTitle: data.title
+    });
+    
+  } catch (error) {
+    console.error('API error:', error);
+    sendMessageSafe({
+      action: 'apiError',
+      error: error.message,
+      videoTitle: data.title
+    });
+  }
 }
 
-function sanitizeFilename(name) {
-  return name.replace(/[<>:"/\\|?*]/g, '_').substring(0, 100);
+async function testApiConnection(endpoint) {
+  try {
+    const response = await fetch(`${endpoint}/`, {
+      method: 'GET',
+    });
+    
+    if (!response.ok) {
+      return { success: false, error: `HTTP ${response.status}` };
+    }
+    
+    const data = await response.json();
+    return { success: true, data };
+    
+  } catch (error) {
+    return { success: false, error: error.message };
+  }
 }

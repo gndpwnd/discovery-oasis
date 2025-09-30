@@ -8,11 +8,13 @@
     "tabs",
     "activeTab",
     "scripting",
-    "downloads"
+    "downloads",
+    "clipboardRead"
   ],
   "host_permissions": [
     "https://www.youtube.com/*",
-    "https://youtube.com/*"
+    "https://youtube.com/*",
+    "https://www.youtube-transcript.io/*"
   ],
   "action": {
     "default_popup": "popup.html"
@@ -22,7 +24,7 @@
   },
   "content_scripts": [
     {
-      "matches": ["https://www.youtube.com/*", "https://youtube.com/*"],
+      "matches": ["https://www.youtube.com/*", "https://youtube.com/*", "https://www.youtube-transcript.io/*"],
       "js": ["content.js"],
       "run_at": "document_idle"
     }
