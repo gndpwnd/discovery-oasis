@@ -36,10 +36,26 @@ class LinkedInCourseDownloader:
         self.headless = headless
         self.driver = driver  # Allow passing existing driver
         self.course_title = None
+        self.course_slug = self.extract_course_slug(self.course_url)
         self.output_dir = None
         self.failed_items = []
         self.progress_file = None
         self.downloaded_urls = set()
+    
+    def extract_course_slug(self, url: str) -> str:
+        """Extract the unique course identifier from URL"""
+        # URL format: https://www.linkedin.com/learning/course-slug-here/optional-video-slug
+        # We want just the course-slug-here part
+        try:
+            # Remove protocol and domain
+            path = url.replace('https://www.linkedin.com/learning/', '')
+            # Get first part (course slug) before any additional path
+            slug = path.split('/')[0]
+            # Clean it up
+            slug = slug.strip('/')
+            return slug if slug else "unknown-course"
+        except:
+            return "unknown-course"
         
     def setup_driver(self):
         """Setup Chrome driver with appropriate options"""
@@ -722,10 +738,32 @@ class LinkedInCourseDownloader:
         time.sleep(5)
         
         self.course_title = self.get_course_title()
-        safe_title = self.sanitize_filename(self.course_title)
-
-        self.output_dir = Path(OUTPUT_BASE_DIR) / safe_title
+        
+        # Use course slug from URL as the primary directory identifier
+        # This ensures each unique course URL gets its own directory
+        dir_name = self.course_slug
+        
+        print(f"[DEBUG] Course slug: {self.course_slug}")
+        print(f"[DEBUG] Directory name: {dir_name}")
+        
+        # Create the output directory
+        self.output_dir = Path(OUTPUT_BASE_DIR) / dir_name
+        
+        # If directory exists, we're resuming - that's fine
+        # If it doesn't exist, create it
         self.output_dir.mkdir(parents=True, exist_ok=True)
+        
+        # Store the course title in a metadata file for reference
+        metadata_file = self.output_dir / "_course_info.txt"
+        if not metadata_file.exists():
+            try:
+                with open(metadata_file, 'w', encoding='utf-8') as f:
+                    f.write(f"Course Title: {self.course_title}\n")
+                    f.write(f"Course URL: {self.course_url}\n")
+                    f.write(f"Course Slug: {self.course_slug}\n")
+                    f.write(f"Downloaded: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')}\n")
+            except Exception as e:
+                print(f"[WARN] Could not create metadata file: {e}")
         
         self.progress_file = self.output_dir / "_progress.txt"
         self.load_progress()
