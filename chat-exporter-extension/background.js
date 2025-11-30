@@ -7,15 +7,20 @@ chrome.action.onClicked.addListener(async (tab) => {
 
     // Determine which platform we're on
     let platform;
+    let scriptFile;
     
     if (tab.url.includes('scholar.google.com')) {
       platform = 'google_scholar_labs';
+      scriptFile = 'extractors/google_scholar_labs.js';
     } else if (tab.url.includes('claude.ai')) {
       platform = 'claude';
+      scriptFile = 'extractors/claude.js';
     } else if (tab.url.includes('chat.deepseek.com')) {
       platform = 'deepseek';
+      scriptFile = 'extractors/deepseek.js';
     } else if (tab.url.includes('chatgpt.com') || tab.url.includes('chat.openai.com')) {
       platform = 'chatgpt';
+      scriptFile = 'extractors/chatgpt.js';
     } else {
       throw new Error('Unsupported platform. Currently supported: Google Scholar Labs, Claude.ai, DeepSeek, and ChatGPT');
     }
@@ -23,7 +28,7 @@ chrome.action.onClicked.addListener(async (tab) => {
     // Execute the appropriate extractor script
     const results = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
-      files: [`extractors/${platform}.js`]
+      files: [scriptFile]
     });
 
     if (results && results[0] && results[0].result) {
