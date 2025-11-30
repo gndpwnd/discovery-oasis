@@ -12,7 +12,13 @@
     "https://claude.ai/*",
     "https://chat.deepseek.com/*",
     "https://chatgpt.com/*",
-    "https://chat.openai.com/*"
+    "https://chat.openai.com/*",
+    "https://copilot.microsoft.com/*",
+    "https://grok.com/*",
+    "https://x.ai/*",
+    "https://gemini.google.com/*",
+    "https://www.perplexity.ai/*",
+    "https://www.phind.com/*"
   ],
   "background": {
     "service_worker": "background.js"

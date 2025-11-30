@@ -21,10 +21,27 @@ chrome.action.onClicked.addListener(async (tab) => {
     } else if (tab.url.includes('chatgpt.com') || tab.url.includes('chat.openai.com')) {
       platform = 'chatgpt';
       scriptFile = 'extractors/chatgpt.js';
+    } else if (tab.url.includes('copilot.microsoft.com')) {
+      platform = 'microsoft_copilot';
+      scriptFile = 'extractors/microsoft_copilot.js';
+    } else if (tab.url.includes('grok.com') || tab.url.includes('x.ai')) {
+      platform = 'grok';
+      scriptFile = 'extractors/grok.js';
+    } else if (tab.url.includes('perplexity.ai')) {
+      platform = 'perplexity';
+      scriptFile = 'extractors/perplexity.js';
+    } else if (tab.url.includes('phind.com')) {
+      platform = 'phind';
+      scriptFile = 'extractors/phind.js';
+    } else if (tab.url.includes('gemini.google.com')) {
+      platform = 'gemini';
+      scriptFile = 'extractors/gemini.js';
     } else {
-      throw new Error('Unsupported platform. Currently supported: Google Scholar Labs, Claude.ai, DeepSeek, and ChatGPT');
+      throw new Error('Unsupported platform. Currently supported: Google Scholar Labs, Claude.ai, DeepSeek, ChatGPT, Microsoft Copilot, Grok, and Gemini');
     }
 
+    console.log(`Detected platform: ${platform}, using script: ${scriptFile}`);
+    
     // Execute the appropriate extractor script
     const results = await chrome.scripting.executeScript({
       target: { tabId: tab.id },
