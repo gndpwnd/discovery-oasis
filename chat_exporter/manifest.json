@@ -1,14 +1,17 @@
 {
   "manifest_version": 3,
-  "name": "Google Scholar Labs Exporter",
+  "name": "Universal Chat Exporter",
   "version": "1.0",
-  "description": "Export Google Scholar Labs conversations to markdown",
-  "permissions": ["activeTab", "scripting"],
+  "description": "Export chat conversations from various platforms to markdown",
+  "permissions": ["activeTab", "scripting", "downloads"],
   "action": {
-    "default_popup": "popup.html",
     "default_title": "Export Conversation"
   },
   "host_permissions": [
-    "https://scholar.google.com/*"
-  ]
+    "https://scholar.google.com/*",
+    "https://claude.ai/*"
+  ],
+  "background": {
+    "service_worker": "background.js"
+  }
 }
