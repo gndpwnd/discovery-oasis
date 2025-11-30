@@ -9,9 +9,16 @@
   },
   "host_permissions": [
     "https://scholar.google.com/*",
-    "https://claude.ai/*"
+    "https://claude.ai/*",
+    "https://chat.deepseek.com/*",
+    "https://chatgpt.com/*",
+    "https://chat.openai.com/*"
   ],
   "background": {
     "service_worker": "background.js"
-  }
+  },
+  "web_accessible_resources": [{
+    "resources": ["extractors/*.js"],
+    "matches": ["<all_urls>"]
+  }]
 }
