@@ -36,6 +36,9 @@ chrome.action.onClicked.addListener(async (tab) => {
     } else if (tab.url.includes('gemini.google.com')) {
       platform = 'gemini';
       scriptFile = 'extractors/gemini.js';
+    } else if (tab.url.includes('notebooklm.google.com')) {
+      platform = 'notebooklm';
+      scriptFile = 'extractors/notebooklm.js';
     } else {
       throw new Error('Unsupported platform. Currently supported: Google Scholar Labs, Claude.ai, DeepSeek, ChatGPT, Microsoft Copilot, Grok, and Gemini');
     }

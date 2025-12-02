@@ -18,7 +18,8 @@
     "https://x.ai/*",
     "https://gemini.google.com/*",
     "https://www.perplexity.ai/*",
-    "https://www.phind.com/*"
+    "https://www.phind.com/*",
+    "https://notebooklm.google.com/*"
   ],
   "background": {
     "service_worker": "background.js"
