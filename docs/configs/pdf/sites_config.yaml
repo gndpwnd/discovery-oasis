@@ -1,0 +1,82 @@
+sites:
+  - name: "Anna's Archive"
+    baseUrl: "https://annas-archive.org/search"
+    queryParam: "q"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "Ocean of PDF"
+    baseUrl: "https://oceanofpdf.com/"
+    queryParam: "s"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "PDF Coffee"
+    baseUrl: "https://pdfcoffee.com"
+    usePlus: true
+    searchType: "google"
+    defaultChecked: true
+
+  - name: "Welib"
+    baseUrl: "https://welib.org/search"
+    queryParam: "q"
+    extraParams: "page=1"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "Project Gutenberg"
+    baseUrl: "https://www.gutenberg.org/ebooks/search/"
+    queryParam: "query"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "Library Genesis"
+    baseUrl: "https://libgen.ac/s/"
+    usePlus: false
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "PDF Drive"
+    baseUrl: "https://pdfdrive.com.co/"
+    queryParam: "s"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "Archive.org (Google)"
+    baseUrl: "https://archive.org"
+    usePlus: true
+    searchType: "google"
+    defaultChecked: true
+
+  - name: "Z-Library"
+    baseUrl: "https://z-library.sk/s/"
+    usePlus: false
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "Reddit FreeEBOOKS"
+    baseUrl: "https://www.reddit.com/r/FreeEBOOKS/search/"
+    queryParam: "q"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "IT eBooks Search"
+    baseUrl: "https://it-ebooks-search.info/search"
+    queryParam: "q"
+    usePlus: true
+    searchType: "native"
+    defaultChecked: true
+
+  - name: "Google PDF Search (General)"
+    baseUrl: "https://www.google.com/search"
+    queryParam: "q"
+    extraParams: "filetype:pdf"
+    usePlus: true
+    searchType: "google-general"
+    defaultChecked: true

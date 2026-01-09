@@ -1,164 +1,256 @@
-// hide the disclaimer on startup
+// Discovery Oasis - Enhanced Static Site with Modular Search Configuration
+
+// Hide the disclaimer on startup
 const disclaimer = document.getElementById("disclaimer");
 disclaimer.style.display = "none";
 
-// Define arrays of search engines for each filter
-const webSearchEngines = [
-  "www.google.com/search?q=",
-  "searx.oloke.xyz/search?q=",  
-  "search.yahoo.com/search?p=",
-  "yandex.com/search/?text=",
-  "www.mojeek.com/search?q=",
-  "duckduckgo.com/?q=",
-  "www.bing.com/search?q=",
-];
-
-const scholarSearchEngines = [
-  "scholar.google.com/scholar?hl=en&as_sdt=0%2C2&q=", 
-  "www.jstor.org/action/doBasicSearch?Query=",
-  "www.semanticscholar.org/search?sort=relevance&q=",
-  "www.refseek.com/search?q=",
-  "core.ac.uk/search?q=",
-  "eric.ed.gov/?q=",
-  "www.base-search.net/Search/Results?oaboost=1&newsearch=1&refid=dcbasen&lookfor=",
-  "www.mendeley.com/search/?query=",
-  "www.jurn.link/#gsc.tab=0&gsc.q=",
-  "researchworks.oclc.org/archivegrid/?q=",
-  "paperity.org/search/?q=",
-  "fatcat.wiki/release/search?q=",
-  "www.econbiz.de/Search/Results?type=AllFields&lookfor=",
-  "www.worldcat.org/search?q=",
-];
-
-const databaseSearchEngines = [
-  "archive.org/search?query=", 
-  "datasetsearch.research.google.com/search?query=", 
-  "catalog.data.gov/dataset?q=",
-  "www.elephind.com/?a=q&hs=1&r=1&results=1&txq="
-];
-
-// PDF/eBook search engines with their specific query formats
-const pdfSearchEngines = [
-  { base: "annas-archive.org/search?q=", usePlus: true, type: "native" },
-  { base: "oceanofpdf.com/?s=", usePlus: true, type: "native" },
-  { base: "pdfcoffee.com", usePlus: true, type: "google" }, // Google dork works better
-  { base: "welib.org/search?page=1&q=", usePlus: true, type: "native" },
-  { base: "www.gutenberg.org/ebooks/search/?query=", usePlus: true, type: "native" },
-  { base: "libgen.ac/s/", usePlus: false, type: "native" }, // uses %20 for spaces
-  { base: "pdfdrive.com.co/?s=", usePlus: true, type: "native" },
-  { base: "archive.org", usePlus: true, type: "google" }, // Google dork works better
-  { base: "z-library.sk/s/", usePlus: false, type: "native" }, // uses %20 for spaces
-  { base: "www.reddit.com/r/FreeEBOOKS/search/?q=", usePlus: true, type: "native" },
-  { base: "it-ebooks-search.info/search?q=", usePlus: true, type: "native" }
-];
-
-// Get the filter checkboxes and search button
-const webFilter = document.getElementById("web-filter");
-const scholarFilter = document.getElementById("scholar-filter");
-const databaseFilter = document.getElementById("database-filter");
-const pdfFilter = document.getElementById("pdf-filter");
-const searchBtn = document.getElementById('search-btn');
-
-let web_urls = [];
-let scholar_urls = [];
-let database_urls = [];
-let pdf_urls = [];
-let browserName;
-
-function disco(){
-  // for every url list, if the corresponding filter has been checked, open up new tabs for each url
-  if (webFilter.checked) {
-    for (const element of web_urls) {
-      window.open("https://"+element, "_blank");
-    }
+// Configuration for each search type
+// NOTE: AI sources removed - they require DOM manipulation via Chrome extension
+const searchTypes = {
+  web: {
+    configPath: 'configs/web/sites_config.yaml',
+    checkboxContainer: 'web-checkboxes',
+    sourceContainer: 'web-sources',
+    filter: 'web-filter',
+    sites: []
+  },
+  scholar: {
+    configPath: 'configs/scholar/sites_config.yaml',
+    checkboxContainer: 'scholar-checkboxes',
+    sourceContainer: 'scholar-sources',
+    filter: 'scholar-filter',
+    sites: []
+  },
+  database: {
+    configPath: 'configs/database/sites_config.yaml',
+    checkboxContainer: 'database-checkboxes',
+    sourceContainer: 'database-sources',
+    filter: 'database-filter',
+    sites: []
+  },
+  pdf: {
+    configPath: 'configs/pdf/sites_config.yaml',
+    checkboxContainer: 'pdf-checkboxes',
+    sourceContainer: 'pdf-sources',
+    filter: 'pdf-filter',
+    sites: []
   }
-  if (scholarFilter.checked) {
-    for (const element of scholar_urls) {
-      window.open("https://"+element, "_blank");
-    }
-  }
-  if (databaseFilter.checked) {
-    for (const element of database_urls) {
-      window.open("https://"+element, "_blank");
-    }
-  }
-  if (pdfFilter.checked) {
-    for (const element of pdf_urls) {
-      window.open("https://"+element, "_blank");
-    }
+};
+
+// Load YAML configuration for a search type
+async function loadConfig(type) {
+  try {
+    const response = await fetch(searchTypes[type].configPath);
+    const yamlText = await response.text();
+    const config = jsyaml.load(yamlText);
+    searchTypes[type].sites = config.sites || [];
+    return config.sites;
+  } catch (error) {
+    console.error(`Error loading ${type} config:`, error);
+    return [];
   }
 }
 
-// depending on the browser, conduct the searches
-function discoveryConduct(){
-  // Make individual searches
+// Generate checkboxes for a search type
+function generateCheckboxes(type, sites) {
+  const container = document.getElementById(searchTypes[type].checkboxContainer);
+  container.innerHTML = ''; // Clear existing checkboxes
 
-  // clear urls out
-  web_urls = [];
-  scholar_urls = [];
-  database_urls = [];
-  pdf_urls = [];
+  // Load saved preferences from localStorage
+  const savedPrefs = JSON.parse(localStorage.getItem(`${type}-preferences`) || '{}');
 
-  let searchQuery = document.getElementById("search-input").value;
+  sites.forEach((site, index) => {
+    const label = document.createElement('label');
+    const checkbox = document.createElement('input');
+    checkbox.type = 'checkbox';
+    checkbox.id = `${type}-site-${index}`;
+    checkbox.dataset.siteName = site.name;
+    checkbox.dataset.type = type;
 
-  // if search query is blank, show disclaimer and exit
-  if (searchQuery == "") {
+    // Check if we have saved preference, otherwise use defaultChecked
+    const isChecked = savedPrefs.hasOwnProperty(site.name)
+      ? savedPrefs[site.name]
+      : (site.defaultChecked !== false);
+
+    checkbox.checked = isChecked;
+
+    // Save preference on change
+    checkbox.addEventListener('change', () => {
+      savePreferences(type);
+    });
+
+    label.appendChild(checkbox);
+    label.appendChild(document.createTextNode(site.name));
+    container.appendChild(label);
+  });
+}
+
+// Save preferences to localStorage
+function savePreferences(type) {
+  const checkboxes = document.querySelectorAll(`input[data-type="${type}"]`);
+  const preferences = {};
+
+  checkboxes.forEach(checkbox => {
+    preferences[checkbox.dataset.siteName] = checkbox.checked;
+  });
+
+  localStorage.setItem(`${type}-preferences`, JSON.stringify(preferences));
+}
+
+// Load preferences from localStorage
+function loadPreferences() {
+  Object.keys(searchTypes).forEach(type => {
+    const savedPrefs = JSON.parse(localStorage.getItem(`${type}-preferences`) || '{}');
+    const checkboxes = document.querySelectorAll(`input[data-type="${type}"]`);
+
+    checkboxes.forEach(checkbox => {
+      if (savedPrefs.hasOwnProperty(checkbox.dataset.siteName)) {
+        checkbox.checked = savedPrefs[checkbox.dataset.siteName];
+      }
+    });
+  });
+}
+
+// Initialize all configurations
+async function initializeConfigs() {
+  for (const type of Object.keys(searchTypes)) {
+    const sites = await loadConfig(type);
+    generateCheckboxes(type, sites);
+  }
+}
+
+// Show/hide source containers based on filter selection
+function setupFilterToggles() {
+  Object.keys(searchTypes).forEach(type => {
+    const filter = document.getElementById(searchTypes[type].filter);
+    const sourceContainer = document.getElementById(searchTypes[type].sourceContainer);
+
+    filter.addEventListener('change', () => {
+      if (filter.checked) {
+        sourceContainer.style.display = 'block';
+      } else {
+        sourceContainer.style.display = 'none';
+      }
+    });
+  });
+}
+
+// Select All / Deselect All functionality
+function setupSelectAllButtons() {
+  const selectAllButtons = document.querySelectorAll('.select-all-btn');
+
+  selectAllButtons.forEach(button => {
+    button.addEventListener('click', () => {
+      const type = button.dataset.type;
+      const checkboxes = document.querySelectorAll(`input[data-type="${type}"]`);
+      const allChecked = Array.from(checkboxes).every(cb => cb.checked);
+
+      checkboxes.forEach(checkbox => {
+        checkbox.checked = !allChecked;
+      });
+
+      // Update button text
+      button.textContent = allChecked ? 'Select All' : 'Deselect All';
+
+      // Save preferences
+      savePreferences(type);
+    });
+  });
+}
+
+// Build URL for a site based on its configuration
+function buildUrl(site, query) {
+  const queryPlus = query.replace(/ /g, '+');
+  const queryEncoded = encodeURIComponent(query);
+
+  // Handle PDF search types
+  if (site.searchType === 'google') {
+    // Google dork for specific site
+    return `https://www.google.com/search?q=site:${site.baseUrl}+${queryPlus}+filetype:pdf`;
+  } else if (site.searchType === 'google-general') {
+    // General Google PDF search
+    return `https://www.google.com/search?q=${queryPlus}+filetype:pdf`;
+  }
+
+  // Handle sites with queryParam
+  if (site.queryParam) {
+    const queryValue = site.usePlus ? queryPlus : queryEncoded;
+    let url = `${site.baseUrl}?${site.queryParam}=${queryValue}`;
+
+    // Add extra parameters if specified
+    if (site.extraParams) {
+      url += `&${site.extraParams}`;
+    }
+
+    return url;
+  }
+
+  // Handle sites with direct URL concatenation (like Library Genesis, Z-Library)
+  const queryValue = site.usePlus ? queryPlus : queryEncoded;
+  return `${site.baseUrl}${queryValue}`;
+}
+
+// Execute search and open tabs
+function executeSearch() {
+  const searchQuery = document.getElementById("search-input").value;
+
+  // Validate search query
+  if (!searchQuery || searchQuery.trim() === "") {
     disclaimer.style.display = "block";
     return;
   }
 
-  // Replace spaces with plus signs for standard queries
-  let searchQueryPlus = searchQuery.replace(/ /g, "+");
-  
-  // Replace spaces with %20 for URL encoding
-  let searchQueryEncoded = searchQuery.replace(/ /g, "%20");
+  disclaimer.style.display = "none";
 
-  // make urls for each type of search engine
-  for (const element of webSearchEngines) {
-    let url = element + searchQueryPlus;
-    web_urls.push(url);
-  }
+  // Collect all URLs to open
+  const urlsToOpen = [];
 
-  for (const element of scholarSearchEngines) {
-    let url = element + searchQueryPlus;
-    scholar_urls.push(url);
-  }
+  Object.keys(searchTypes).forEach(type => {
+    const filter = document.getElementById(searchTypes[type].filter);
 
-  for (const element of databaseSearchEngines) {
-    let url = element + searchQueryPlus;
-    database_urls.push(url);
-  }
+    if (filter.checked) {
+      const checkboxes = document.querySelectorAll(`input[data-type="${type}"]:checked`);
 
-  // PDF/eBook search using native site search or Google dorking
-  if (pdfFilter.checked) {
-    for (const engine of pdfSearchEngines) {
-      let url;
-      if (engine.type === "google") {
-        // Use Google dork for better results on these sites
-        url = `www.google.com/search?q=site:${engine.base}+${searchQueryPlus}+filetype:pdf`;
-      } else {
-        // Use native site search
-        let query = engine.usePlus ? searchQueryPlus : searchQueryEncoded;
-        url = engine.base + query;
-      }
-      pdf_urls.push(url);
+      checkboxes.forEach(checkbox => {
+        const siteName = checkbox.dataset.siteName;
+        const site = searchTypes[type].sites.find(s => s.name === siteName);
+
+        if (site) {
+          const url = buildUrl(site, searchQuery);
+          urlsToOpen.push(url);
+        }
+      });
     }
-    
-    // Add general Google PDF search
-    let generalPdfSearch = `www.google.com/search?q=${searchQueryPlus}+filetype:pdf`;
-    pdf_urls.push(generalPdfSearch);
-  }
+  });
 
-  // try to run the disco function
-  // if it fails, then show the disclaimer
-  try {
-    disco();
-  } catch (error) {
-    console.log(error);
-  }
+  // Open all tabs
+  urlsToOpen.forEach(url => {
+    window.open(url, '_blank');
+  });
 }
 
-// Add click event listener to search button
-searchBtn.addEventListener('click', function() {
-  discoveryConduct();
-});
+// Initialize the application
+async function init() {
+  await initializeConfigs();
+  setupFilterToggles();
+  setupSelectAllButtons();
+
+  // Setup search button
+  const searchBtn = document.getElementById('search-btn');
+  searchBtn.addEventListener('click', executeSearch);
+
+  // Setup Enter key for search
+  const searchInput = document.getElementById('search-input');
+  searchInput.addEventListener('keypress', (e) => {
+    if (e.key === 'Enter') {
+      executeSearch();
+    }
+  });
+}
+
+// Start the application when DOM is ready
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', init);
+} else {
+  init();
+}

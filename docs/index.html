@@ -26,8 +26,49 @@
         <label><input type="checkbox" id="database-filter">Database</label>
         <label><input type="checkbox" id="pdf-filter">PDF</label>
       </div>
+
+      <!-- Source selection containers for each search type -->
+      <div id="source-containers">
+        <!-- Web sources -->
+        <div id="web-sources" class="source-container" style="display: block;">
+          <div class="source-header">
+            <h3>Web Search Sources</h3>
+            <button class="select-all-btn" data-type="web">Select All</button>
+          </div>
+          <div id="web-checkboxes" class="source-checkboxes"></div>
+        </div>
+
+        <!-- Scholar sources -->
+        <div id="scholar-sources" class="source-container" style="display: none;">
+          <div class="source-header">
+            <h3>Scholar Search Sources</h3>
+            <button class="select-all-btn" data-type="scholar">Select All</button>
+          </div>
+          <div id="scholar-checkboxes" class="source-checkboxes"></div>
+        </div>
+
+        <!-- Database sources -->
+        <div id="database-sources" class="source-container" style="display: none;">
+          <div class="source-header">
+            <h3>Database Search Sources</h3>
+            <button class="select-all-btn" data-type="database">Select All</button>
+          </div>
+          <div id="database-checkboxes" class="source-checkboxes"></div>
+        </div>
+
+        <!-- PDF sources -->
+        <div id="pdf-sources" class="source-container" style="display: none;">
+          <div class="source-header">
+            <h3>PDF Search Sources</h3>
+            <button class="select-all-btn" data-type="pdf">Select All</button>
+          </div>
+          <div id="pdf-checkboxes" class="source-checkboxes"></div>
+        </div>
+      </div>
+
       <button id="search-btn" class="search-btn" type="button"><span>Search</span></button>
     </div>
   </body>
+  <script src="js-yaml.min.js"></script>
   <script src="do.js"></script>
 </html>

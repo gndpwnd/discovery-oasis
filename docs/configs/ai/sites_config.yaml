@@ -1,0 +1,65 @@
+sites:
+  - name: ChatGPT
+    baseUrl: https://chatgpt.com/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Claude
+    baseUrl: https://claude.ai/new
+    queryParam: q
+    defaultChecked: true
+
+  - name: Deepseek
+    baseUrl: https://chat.deepseek.com/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Perplexity
+    baseUrl: https://www.perplexity.ai/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: Phind
+    baseUrl: https://www.phind.com/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: You.com
+    baseUrl: https://you.com/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: Consensus
+    baseUrl: https://consensus.app/search/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Elicit
+    baseUrl: https://elicit.com/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: Gemini
+    baseUrl: https://gemini.google.com/app
+    queryParam: q
+    defaultChecked: true
+
+  - name: Copilot
+    baseUrl: https://copilot.microsoft.com/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Grok
+    baseUrl: https://x.com/i/grok
+    queryParam: q
+    defaultChecked: true
+
+  - name: Meta AI
+    baseUrl: https://www.meta.ai/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Poe
+    baseUrl: https://poe.com/
+    queryParam: q
+    defaultChecked: true

@@ -1,0 +1,21 @@
+sites:
+  - name: "Internet Archive"
+    baseUrl: "https://archive.org/search"
+    queryParam: "query"
+    defaultChecked: true
+
+  - name: "Google Dataset Search"
+    baseUrl: "https://datasetsearch.research.google.com/search"
+    queryParam: "query"
+    defaultChecked: true
+
+  - name: "Data.gov"
+    baseUrl: "https://catalog.data.gov/dataset"
+    queryParam: "q"
+    defaultChecked: true
+
+  - name: "Elephind"
+    baseUrl: "https://www.elephind.com/"
+    queryParam: "txq"
+    extraParams: "a=q&hs=1&r=1&results=1"
+    defaultChecked: true

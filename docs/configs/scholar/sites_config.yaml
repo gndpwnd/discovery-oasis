@@ -1,0 +1,82 @@
+# Only includes sources that work reliably with URL parameters
+# Sources requiring DOM manipulation/form injection should use Chrome extensions
+
+sites:
+  - name: Google Scholar
+    baseUrl: https://scholar.google.com/scholar
+    queryParam: q
+    extraParams: hl=en&as_sdt=0%2C2
+    defaultChecked: true
+
+  - name: PubMed
+    baseUrl: https://pubmed.ncbi.nlm.nih.gov/
+    queryParam: term
+    defaultChecked: true
+
+  - name: arXiv
+    baseUrl: https://arxiv.org/search/
+    queryParam: query
+    defaultChecked: true
+
+  - name: Semantic Scholar
+    baseUrl: https://www.semanticscholar.org/search
+    queryParam: q
+    extraParams: sort=relevance
+    defaultChecked: true
+
+  - name: CORE
+    baseUrl: https://core.ac.uk/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: BASE
+    baseUrl: https://www.base-search.net/Search/Results
+    queryParam: lookfor
+    extraParams: oaboost=1&newsearch=1&refid=dcbasen
+    defaultChecked: true
+
+  - name: RefSeek
+    baseUrl: https://www.refseek.com/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: ERIC
+    baseUrl: https://eric.ed.gov/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Paperity
+    baseUrl: https://paperity.org/search/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Fatcat
+    baseUrl: https://fatcat.wiki/release/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: WorldCat
+    baseUrl: https://www.worldcat.org/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: CiteSeerX
+    baseUrl: https://citeseerx.ist.psu.edu/search
+    queryParam: q
+    defaultChecked: true
+
+# REMOVED - Require Chrome extension for proper functionality:
+# - Scopus (complex JavaScript search interface)
+# - ScienceDirect (requires form injection)
+# - IEEE Xplore (JavaScript-heavy, inconsistent URL params)
+# - Mendeley (session-based search)
+# - Jurn (custom search engine)
+# - ArchiveGrid (form-based)
+# - EconBiz (complex params)
+# - PubPeer (JavaScript search)
+# - PLOS (site-specific search)
+# - Springer (mixed results, often redirects)
+# - Wiley (authentication required)
+# - Nature (paywall, complex interface)
+# - SSRN (requires session/cookies)
+# - Microsoft Academic (deprecated service)

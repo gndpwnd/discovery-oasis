@@ -1,0 +1,35 @@
+sites:
+  - name: Google
+    baseUrl: https://www.google.com/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: Searx (Oloke)
+    baseUrl: https://searx.oloke.xyz/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: Yandex
+    baseUrl: https://yandex.com/search/
+    queryParam: text
+    defaultChecked: true
+
+  - name: DuckDuckGo
+    baseUrl: https://duckduckgo.com/
+    queryParam: q
+    defaultChecked: true
+
+  - name: Bing
+    baseUrl: https://www.bing.com/search
+    queryParam: q
+    defaultChecked: true
+
+  - name: Yahoo
+    baseUrl: https://search.yahoo.com/search
+    queryParam: p
+    defaultChecked: true
+
+  - name: Mojeek
+    baseUrl: https://www.mojeek.com/search
+    queryParam: q
+    defaultChecked: true
