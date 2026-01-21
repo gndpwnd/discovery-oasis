@@ -9,11 +9,11 @@
     <link rel="stylesheet" type="text/css" href="do.css">
   </head>
   <body>
-    <div class="icon-container">
-      <img src="imgs/icon.png" alt="Icon" class="icon">
-    </div>
     <div id="logo-container">
         <img src="imgs/logo.png" alt="Discovery Oasis logo">
+    </div>
+    <div class="icon-container">
+      <img src="imgs/icon.png" alt="Icon" class="icon">
     </div>
     <div id="disclaimer" class="disclaimer">
       <p>You forgot to tell me what you want to look for ¯\_(ツ)_/¯</p>
@@ -27,7 +27,9 @@
         <label><input type="checkbox" id="pdf-filter">PDF</label>
       </div>
 
-      <!-- Source selection containers for each search type -->
+      <button id="search-btn" class="search-btn" type="button"><span>Search</span></button>
+
+      <!-- Source selection containers for each search type (below search for advanced users) -->
       <div id="source-containers">
         <!-- Web sources -->
         <div id="web-sources" class="source-container" style="display: block;">
@@ -65,8 +67,6 @@
           <div id="pdf-checkboxes" class="source-checkboxes"></div>
         </div>
       </div>
-
-      <button id="search-btn" class="search-btn" type="button"><span>Search</span></button>
     </div>
   </body>
   <script src="js-yaml.min.js"></script>

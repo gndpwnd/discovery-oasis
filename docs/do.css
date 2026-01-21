@@ -54,27 +54,18 @@ body {
 }
 
 .icon-container {
-    width: 300px;
-    height: 300px;
-    border-radius: 50%;
-    position: fixed;
-    top: 15vh;
-    left: 50%;
-    transform: translate(-50%, 0);
-    background: radial-gradient(circle at center, #ff0000, #ffff00, #00ff00, #00ffff, #0000ff, #ff00ff, #ff0000);
+    width: 200px;
+    height: 200px;
+    margin: 30px auto;
     display: flex;
     justify-content: center;
     align-items: center;
-    background-size: 0 0;
-    z-index: -1;
-    pointer-events: none;
 }
 
 .icon-container img {
-    width: 200px;
-    height: 94px;
+    width: 100%;
+    height: auto;
     display: block;
-    margin: 0 auto;
     animation: rotate-colors 3s linear infinite;
 }
 
@@ -148,7 +139,7 @@ body {
 #source-containers {
     display: flex;
     flex-wrap: nowrap;
-    justify-content: flex-start;
+    justify-content: center;
     gap: 15px;
     width: calc(100% - 40px);
     max-width: none;
@@ -184,7 +175,6 @@ body {
     flex: 0 0 280px;
     min-width: 280px;
     max-width: 280px;
-    height: 450px;
     display: flex;
     flex-direction: column;
 }
@@ -227,8 +217,7 @@ body {
     color: white;
     overflow-y: auto;
     overflow-x: hidden;
-    flex: 1 1 auto;
-    min-height: 0;
+    max-height: 400px;
     padding-right: 10px;
 }
 
