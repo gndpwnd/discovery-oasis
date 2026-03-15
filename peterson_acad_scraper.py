@@ -33,14 +33,14 @@ class PetersonAcademyScraper:
         self.headless = headless
         self.driver = None
         self.failed_items = []
-    
+
     def setup_driver(self):
         """Setup Chrome driver with appropriate options"""
         chrome_options = Options()
-        
+
         if self.headless:
             chrome_options.add_argument("--headless=new")
-        
+
         chrome_options.add_argument("--no-sandbox")
         chrome_options.add_argument("--disable-dev-shm-usage")
         chrome_options.add_argument("--disable-blink-features=AutomationControlled")
@@ -48,9 +48,9 @@ class PetersonAcademyScraper:
         chrome_options.add_argument("--disable-notifications")
         chrome_options.add_experimental_option("excludeSwitches", ["enable-automation"])
         chrome_options.add_experimental_option('useAutomationExtension', False)
-        
+
         print(f"[INFO] Starting Chrome browser...")
-        
+
         self.driver = webdriver.Chrome(
             service=Service(ChromeDriverManager().install()),
             options=chrome_options
@@ -619,14 +619,14 @@ class PetersonAcademyScraper:
 
 def main():
     headless = '--headless' in sys.argv
-    
+
     print("\n" + "="*80)
     print("PETERSON ACADEMY COURSE SCRAPER")
     print("="*80)
     print(f"Headless mode: {'Yes' if headless else 'No'}")
     print(f"Resume capability: ENABLED")
     print("="*80 + "\n")
-    
+
     scraper = PetersonAcademyScraper(headless=headless)
     scraper.run()
 
