@@ -15,12 +15,10 @@ from typing import List, Dict, Optional
 
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-from selenium.webdriver.chrome.service import Service
 from selenium.webdriver.chrome.options import Options
 from selenium.webdriver.support.ui import WebDriverWait
 from selenium.webdriver.support import expected_conditions as EC
 from selenium.common.exceptions import TimeoutException, NoSuchElementException
-from webdriver_manager.chrome import ChromeDriverManager
 
 # --- CONFIG ---
 OUTPUT_BASE_DIR = "./courses"
@@ -51,10 +49,7 @@ class PetersonAcademyScraper:
 
         print(f"[INFO] Starting Chrome browser...")
 
-        self.driver = webdriver.Chrome(
-            service=Service(ChromeDriverManager().install()),
-            options=chrome_options
-        )
+        self.driver = webdriver.Chrome(options=chrome_options)
         self.driver.set_window_size(1400, 900)
         self.driver.execute_script("Object.defineProperty(navigator, 'webdriver', {get: () => undefined})")
     
